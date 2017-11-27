@@ -5,7 +5,7 @@ from celery import Celery
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'buzzz.settings')
 
-app = Celery('proj', backend='amqp', broker='amqp://')
+app = Celery('proj')
 
 # Using a string here means the worker don't have to serialize
 # the configuration object to child processes.
@@ -34,6 +34,6 @@ app.conf.beat_schedule = {
     'add-every-5-seconds-forever': {
         'task': 'sum_two_numbers',
         'schedule': 5.0,
-        'args': (),
+        'args': (1, 1),
     },
 }
