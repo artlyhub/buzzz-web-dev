@@ -20,8 +20,8 @@ app.autodiscover_tasks()
 def debug_task(self):
   print('Request: {0!r}'.format(self.request))
 
-# from celery.schedules import crontab
-#
+from celery.schedules import crontab
+
 # app.conf.beat_schedule = {
 #     'bithumb_get_orderbook_every_minute': {
 #         'task': 'bithumb_get_base_orderbook',
@@ -29,3 +29,11 @@ def debug_task(self):
 #         'args': (),
 #     },
 # }
+
+app.conf.beat_schedule = {
+    'add 1 and 1 every 5 seconds forever': {
+        'task': 'sum_two_numbers',
+        'schedule': 5.0,
+        'args': (),
+    },
+}
