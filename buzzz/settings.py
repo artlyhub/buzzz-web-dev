@@ -19,7 +19,7 @@ DB_USER = sensitives['DB_USER']
 DB_PW = sensitives['DB_PW']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = sensitives['DEBUG']
 
 ALLOWED_HOSTS = [IP_ADDRESS, '127.0.0.1', '127.0.1.1']
 
