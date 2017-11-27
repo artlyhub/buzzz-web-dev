@@ -31,7 +31,7 @@ from celery.schedules import crontab
 # }
 
 app.conf.beat_schedule = {
-    'add 1 and 1 every 5 seconds forever': {
+    'add-every-5-seconds-forever': {
         'task': 'sum_two_numbers',
         'schedule': 5.0,
         'args': (),
