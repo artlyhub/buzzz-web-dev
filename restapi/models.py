@@ -58,7 +58,7 @@ class Info(models.Model):
     yield_ret = models.FloatField() # 배당수익률
 
     def __str__(self):
-        return self.code
+        return self.code.code
 
 
 class OHLCV(models.Model):
@@ -73,7 +73,7 @@ class OHLCV(models.Model):
     volume = models.IntegerField()
 
     def __str__(self):
-        return self.code
+        return self.code.code
 
 
 # class BuySell(models.Model):
@@ -100,4 +100,4 @@ class Financial(models.Model):
     dividend_per_share = models.IntegerField(blank=True, null=True) # 주당배당금
 
     def __str__(self):
-        return self.code
+        return self.code.code

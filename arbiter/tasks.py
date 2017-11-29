@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 import simplejson as json
 from celery.decorators import task
-
+    
 @task(name="sum_two_numbers")
 def add(x, y):
     return x + y
