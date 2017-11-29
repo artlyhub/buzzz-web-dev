@@ -16,6 +16,7 @@ class TickerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticker
         fields = ('code',
+                  'date',
                   'name',
                   'market_type',)
 
