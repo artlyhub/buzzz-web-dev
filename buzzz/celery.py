@@ -30,10 +30,12 @@ from celery.schedules import crontab
 #     },
 # }
 
+import random
+
 app.conf.beat_schedule = {
     'add-every-5-seconds-forever': {
         'task': 'sum_two_numbers',
         'schedule': 5.0,
-        'args': (1, 1),
+        'args': (random.randint(1, 100), random.randint(1, 100)),
     },
 }
