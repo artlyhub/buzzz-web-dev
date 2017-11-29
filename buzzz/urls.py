@@ -4,7 +4,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 
+from .views import IndexView, login_view, logout_view
+
 urlpatterns = [
+    url(r'^$', IndexView.as_view(), name='home'),
+    url(r'^login/$', login_view, name='login'),
+    url(r'^logout/$', logout_view, name='logout'),
     url(r'^admin/', admin.site.urls),
     url(r'^arbiter-api/', include('arbiter.api.urls', namespace='arbiter-api')),
     url(r'^api/', include('restapi.urls', namespace='api')),
@@ -14,3 +19,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
