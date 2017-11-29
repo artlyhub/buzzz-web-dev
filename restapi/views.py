@@ -25,50 +25,50 @@ User = get_user_model()
 class TickerAPIView(generics.ListCreateAPIView):
     queryset = Ticker.objects.all()
     serializer_class = TickerSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
 
 
 class TickerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ticker.objects.all()
     serializer_class = TickerSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class InfoAPIView(generics.ListCreateAPIView):
     queryset = Info.objects.all()
     serializer_class = InfoSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
 
 
 class InfoDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Info.objects.all()
     serializer_class = InfoSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class OHLCVAPIView(generics.ListCreateAPIView):
     queryset = OHLCV.objects.all()
     serializer_class = OHLCVSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
 
 
 class OHLCVDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = OHLCV.objects.all()
     serializer_class = OHLCVSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class FinancialAPIView(generics.ListCreateAPIView):
     queryset = Financial.objects.all()
     serializer_class = FinancialSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
 
 
 class FinancialDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Financial.objects.all()
     serializer_class = FinancialSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
