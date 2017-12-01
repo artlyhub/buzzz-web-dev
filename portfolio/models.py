@@ -22,8 +22,11 @@ class Portfolio(models.Model):
     name = models.CharField(max_length=100,
                             blank=True,
                             null=True)
-    capital = models.IntegerField(blank=True, null=True)
-    portfolio_type = models.CharField(max_length=2, choices=PORTFOLIO_TYPES)
+    capital = models.BigIntegerField(blank=True, null=True)
+    portfolio_type = models.CharField(max_length=2,
+                                      choices=PORTFOLIO_TYPES,
+                                      blank=True,
+                                      null=True)
     description = models.CharField(max_length=120,
                                    blank=True,
                                    null=True)
@@ -31,7 +34,7 @@ class Portfolio(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.user.user.username
 
 
 class PortfolioHistory(models.Model):

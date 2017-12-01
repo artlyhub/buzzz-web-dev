@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^api/', include('restapi.urls', namespace='api')),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^test/$', TemplateView.as_view(template_name='test.html'), name='test'),
+    url(r'^rms/', include('rms.urls', namespace='rms')),
 ]
 
 if settings.DEBUG:

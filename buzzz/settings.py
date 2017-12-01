@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'arbiter',
     'portfolio',
     'restapi',
+    'rms',
 ]
 
 MIDDLEWARE = [

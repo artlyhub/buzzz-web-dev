@@ -271,7 +271,7 @@ header>.header_wrap>.header_bottom_bar>.header_ratio>.search_bar>.search_icon {
     height: 22px;
     margin: 4px;
     width: 22px;
-    background-image: url('/etemmu/asset/img/search_icon.png');
+    background-image: url('/static/img/search_icon.png');
     background-size: 22px;
     background-position: center;
     background-repeat: no-repeat;
@@ -373,7 +373,7 @@ header>.identity_btn_wrap>.identity_icon_btn.message_on>.circle_icon {
 header>.identity_btn_wrap>.identity_icon_btn.message_on>.bee_icon {
     display: inline-block;
     animation: bee_animation 1.2s ease-in-out infinite;
-    background-image: url('/etemmu/asset/img/message_bell.svg');
+    background-image: url('/static/img/message_bell.svg');
     width: 31px;
     height: 35px;
     background-repeat: no-repeat;
@@ -383,7 +383,7 @@ header>.identity_btn_wrap>.identity_icon_btn.message_off>.circle_icon {
 }
 header>.identity_btn_wrap>.identity_icon_btn.message_off>.bee_icon {
     display: inline-block;
-    background-image: url('/etemmu/asset/img/message_bell.svg');
+    background-image: url('/static/img/message_bell.svg');
     width: 31px;
     height: 35px;
     background-repeat: no-repeat;
@@ -392,13 +392,13 @@ header>.identity_btn_wrap>.identity_icon_btn.message_off + .identity_popup {
     display: none;
 }
 header>.identity_btn_wrap>.identity_icon_btn.message_off:hover>.bee_icon {
-    background-image: url('/etemmu/asset/img/bee_icon.svg');
+    background-image: url('/static/img/bee_icon.svg');
     width: 31px;
     height: 39px;
 }
 header>.identity_btn_wrap>.identity_icon_btn.message_on:hover>.bee_icon {
     animation: none;
-    background-image: url('/etemmu/asset/img/bee_icon.svg');
+    background-image: url('/static/img/bee_icon.svg');
     width: 31px;
     height: 39px;
 }
@@ -508,7 +508,7 @@ header>.identity_btn_wrap>.identity_icon_btn:hover>.circle_icon {
 }
 header>.identity_btn_wrap>.identity_icon_btn>.bee_icon {
     display: none;
-    background-image: url('/etemmu/asset/img/bee_icon.svg');
+    background-image: url('/static/img/bee_icon.svg');
     width: 31px;
     height: 39px;
 }
