@@ -38,4 +38,9 @@ app.conf.beat_schedule = {
         'schedule': 5.0,
         'args': (random.randint(1, 100), random.randint(1, 100)),
     },
+
+    'kos-file-down-at3': {
+    	'task': 'kos_file_down',
+    	'schedule': crontab(minute="10, 15, 20, 25")
+    }
 }
