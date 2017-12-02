@@ -33,14 +33,14 @@ from celery.schedules import crontab
 import random
 
 app.conf.beat_schedule = {
-    'add-every-5-seconds-forever': {
-        'task': 'sum_two_numbers',
-        'schedule': 5.0,
-        'args': (random.randint(1, 100), random.randint(1, 100)),
-    },
+#    'add-every-5-seconds-forever': {
+#        'task': 'sum_two_numbers',
+#        'schedule': 5.0,
+#        'args': (random.randint(1, 100), random.randint(1, 100)),
+#    },
 
     'kos-file-down-at3': {
     	'task': 'kos_file_down',
-    	'schedule': crontab(minute="10, 15, 20, 25")
+    	'schedule': crontab(minute=20)
     }
 }
