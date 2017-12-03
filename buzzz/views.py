@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import (
                 CreateView,
                 DetailView,
@@ -16,6 +17,7 @@ class IndexView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'index.html', {})
 
+@csrf_exempt
 def login_view(request):
     email = request.POST.get('email', '')
     password = request.POST.get('password', '')
@@ -30,6 +32,7 @@ def login_view(request):
     else:
         return HttpResponse(400)
 
+@csrf_exempt
 def logout_view(request):
     auth.logout(request)
     return HttpResponseRedirect("/")
