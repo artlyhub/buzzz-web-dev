@@ -18,3 +18,7 @@ from restapi.models import Ticker, OHLCV
 @task(name="scrape_naver_ohlcv")
 def hi():
 	print('hi hi')
+
+@task(name="test")
+def test():
+	print('hi test hi')
