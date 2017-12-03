@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import include, url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from restapi.views import (
@@ -27,6 +27,8 @@ urlpatterns = [
 
     url(r'^financial/$', FinancialAPIView.as_view(), name='financial'),
     url(r'^financial/(?P<pk>\d+)/$', FinancialDetailAPIView.as_view(), name='financial-detail'),
+
+    url(r'^rms/', include('rms.api.urls', namespace='rms')),
 ]
 
 urlpatterns += accounts_api_urlpatterns
