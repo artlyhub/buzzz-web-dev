@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 import simplejson as json
 from celery.decorators import task
-    
+
 @task(name="sum_two_numbers")
 def add(x, y):
     return x + y
@@ -65,10 +65,10 @@ def xsum(numbers):
 #             time_data = r_datetime[8:]
 #             ask = int(data['data']['asks'][0]['price'])
 #             bid = int(data['data']['bids'][0]['price'])
-#             record = coins_model[coin](date=date,
-#                                        time=time_data,
-#                                        ask=ask,
-#                                        bid=bid)
+            # record = coins_model[coin](date=date,
+            #                            time=time_data,
+            #                            ask=ask,
+            #                            bid=bid)
 #             record.save()
 #     success = True
 #     end_time = time.time()

@@ -1,0 +1,37 @@
+1512289984496	geckodriver	INFO	geckodriver 0.19.0
+1512289984598	geckodriver	INFO	Listening on 127.0.0.1:63013
+1512289986641	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\hori9\\AppData\\Local\\Temp\\rust_mozprofile.gsln2fiCGz69"
+1512290012893	geckodriver	INFO	geckodriver 0.19.0
+1512290013000	geckodriver	INFO	Listening on 127.0.0.1:63073
+1512290015015	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\hori9\\AppData\\Local\\Temp\\rust_mozprofile.yX6Q5EKQQn84"
+1512290015887	Marionette	INFO	Enabled via --marionette
+Unable to read VR Path Registry from C:\Users\hori9\AppData\Local\openvr\openvrpaths.vrpath
+[Parent 12900, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+1512290017584	Marionette	INFO	Listening on port 63081
+1512290018178	Marionette	WARN	TLS certificate errors will be ignored for this session
+1512290018228	Marionette	DEBUG	Register listener.js for window 4294967297
+1512290018265	Marionette	DEBUG	Received DOM event "beforeunload" for "about:blank"
+1512290018442	Marionette	DEBUG	Received DOM event "pagehide" for "about:blank"
+1512290018442	Marionette	DEBUG	Received DOM event "unload" for "about:blank"
+1512290018990	Marionette	DEBUG	Received DOM event "DOMContentLoaded" for "http://kind.krx.co.kr/corpgeneral/corpList.do?method=loadInitPage"
+Unable to read VR Path Registry from C:\Users\hori9\AppData\Local\openvr\openvrpaths.vrpath
+JavaScript warning: http://kind.krx.co.kr/js/akc.js, line 1021: unreachable code after return statement
+JavaScript warning: http://kind.krx.co.kr/js/akc_top.js, line 973: unreachable code after return statement
+1512290019424	Marionette	DEBUG	Received DOM event "pageshow" for "http://kind.krx.co.kr/corpgeneral/corpList.do?method=loadInitPage"
+1512290023660	Marionette	DEBUG	Canceled page load listener because no navigation has been detected
+1512290035129	Marionette	DEBUG	Canceled page load listener because no navigation has been detected
+[Parent 12900, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+[Parent 12900, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+[Child 2332, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+[Child 2332, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+Unable to read VR Path Registry from C:\Users\hori9\AppData\Local\openvr\openvrpaths.vrpath
+[Child 19752, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+[Child 19752, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+*** UTM:SVC TimerManager:registerTimer called after profile-before-change notification. Ignoring timer registration for id: telemetry_modules_ping
+Unable to read VR Path Registry from C:\Users\hori9\AppData\Local\openvr\openvrpaths.vrpath
+[GPU 13596, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+
+KLIB_SelfTest return : KLR_OK

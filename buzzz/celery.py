@@ -39,8 +39,9 @@ app.conf.beat_schedule = {
 #        'args': (random.randint(1, 100), random.randint(1, 100)),
 #    },
 
-    'kos-file-down-at3': {
-    	'task': 'kos_file_down',
-    	'schedule': crontab(minute=20)
+    'scrape-naver-ohlcv-at-4': {
+    	'task': 'scrape_naver_ohlcv',
+    	'schedule': crontab(hour=16),
+        'args': (),
     }
 }
