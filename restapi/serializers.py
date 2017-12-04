@@ -15,7 +15,8 @@ User = get_user_model()
 class TickerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticker
-        fields = ('code',
+        fields = ('id',
+                  'code',
                   'date',
                   'name',
                   'market_type',)

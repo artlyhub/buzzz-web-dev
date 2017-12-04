@@ -29,7 +29,7 @@ PERIOD_TYPES = (
 
 
 class Ticker(models.Model):
-    code = models.CharField(max_length=6, primary_key=True)
+    code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
     name = models.CharField(max_length=120)
     market_type = models.CharField(max_length=3, choices=MARKET_TYPES)
