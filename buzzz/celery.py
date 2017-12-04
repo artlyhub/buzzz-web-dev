@@ -22,31 +22,31 @@ def debug_task(self):
 
 from celery.schedules import crontab
 
-# app.conf.beat_schedule = {
-#     'bithumb_get_orderbook_every_minute': {
-#         'task': 'bithumb_get_base_orderbook',
-#         'schedule': crontab(),
-#         'args': (),
-#     },
-# }
-
-import random
-
 app.conf.beat_schedule = {
-#    'add-every-5-seconds-forever': {
-#        'task': 'sum_two_numbers',
-#        'schedule': 5.0,
-#        'args': (random.randint(1, 100), random.randint(1, 100)),
-#    },
-
-    'scrape-naver-ohlcv-at-4': {
-    	'task': 'scrape_naver_ohlcv',
-    	'schedule': crontab(),
+    'bithumb_get_orderbook_every_minute': {
+        'task': 'bithumb_get_base_orderbook',
+        'schedule': crontab(),
         'args': (),
     },
-    'test': {
-    	'task': 'test',
-    	'schedule': 3.0,
-        'args': (),
-    }
 }
+
+# import random
+#
+# app.conf.beat_schedule = {
+# #    'add-every-5-seconds-forever': {
+# #        'task': 'sum_two_numbers',
+# #        'schedule': 5.0,
+# #        'args': (random.randint(1, 100), random.randint(1, 100)),
+# #    },
+#
+#     'scrape-naver-ohlcv-at-4': {
+#     	'task': 'scrape_naver_ohlcv',
+#     	'schedule': crontab(),
+#         'args': (),
+#     },
+#     'test': {
+#     	'task': 'test',
+#     	'schedule': 3.0,
+#         'args': (),
+#     }
+# }
