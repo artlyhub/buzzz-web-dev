@@ -10,7 +10,6 @@ import requests
 import time
 
 
-#일단 db가 안지워지니까...이거 걸리는 시간은 내일 확인해야겠다...ㅋ 
 def get_ohlcv():
 
 	start_time = time.time()

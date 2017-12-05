@@ -1,34 +1,58 @@
 
 
-#새로 생기는 종목들만 들고와서 추가하는 것도 고려해야해!!
-#전날 종목이랑 비교해서 새로 추가된 종목만 OHLCV 실행하려면...
-#따로 OHLCV_update.py 만들어서 하는게 낫겟땅
-#어차피 OHLCV는 한번 돌리고 그 뒤론 계속 저거만 돌릴거아냥 
-
-
-
-
-from datetime import datetime
 from restapi.models import Ticker
 from restapi.models import OHLCV
+from datetime import datetime
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 import lxml
 import re
 import time
+import os
 
 
 #오늘의 날짜
 today_date = datetime.now().strftime("%Y%m%d")
+#걸린 시간
+work_time = []
+av_time = 0
+
+
+index = 0
+
 
 #Ticker 가져오기(code)
 ticker = Ticker.objects.filter(date=today_date)
 
 
 
+#중단된 지점 확인
+if (os.path.isfile("OHLCV_log.txt")):
+	f = open("OHLCV_log.txt", 'r')
+	#마지막 줄 회사 code만 읽어오기 
+	for line in f:
+		pass
+	last_company = line
+	f.close()
+
+	while not(OHLCV.objects.filter(code=ticker[index].code) == last_company):
+		index += 1
+	index += 1 #중단된 지점 
+	#중단된 회사 ohlcv 삭제 
+	OHLCV.objects.filter(code=ticker[index].code).delete() 
+
+
+
+#log파일 열기 
+f = open("OHLCV_log.txt", 'w')
+
 #OHLCV 
-for t in range(len(ticker)):
+for t in range(index, len(ticker)+1):
+	start_time = time.time()
+	#log 기록(회사 code)
+	f.write(ticker[k].code+"\n")
+
 	#사이트 html 가져오기
 	url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker[t].code
 	user_agent = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
@@ -69,7 +93,17 @@ for t in range(len(ticker)):
 				#db에 저장
 				data = OHLCV(code=ticker[t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
 				data.save()
+	
+	end_time = time.time()
 	time.sleep(0.5)
+
+	work_time.append(end_time-start_time)
+	av_time = (av_time+(end_time-start_time))/2.0
+
+	print("this comany took..", end_time-start_time)
+	print("average = ", av_time)
+f.close()
+
 
 
 

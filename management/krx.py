@@ -81,8 +81,6 @@ class KosFile():
         #save in sqlite
             company = companyCode[i].find_previous_sibling('td').string
             code = companyCode[i].string 
-            print(company)
-            print(code)
             data = Ticker(code=code, date=date, name=company, market_type=market)
             data.save()
 
@@ -113,7 +111,7 @@ def main():
 
 
 
-    ###코스피
+    #########코스피
     kos.changeToTxt('상장법인목록.xls')
     kos.openFile('KOSPI.txt')
 
@@ -127,7 +125,8 @@ def main():
     kos.deleteFile('KOSPI.txt')
 
 
-    ###코스닥
+
+    ########코스닥
     kos.changeToTxt('상장법인목록(1).xls')
     kos.openFile('KOSDAQ.txt')
 
