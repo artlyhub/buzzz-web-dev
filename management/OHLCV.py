@@ -27,18 +27,18 @@ ticker = Ticker.objects.filter(date=today_date)
 
 
 
-OHLCV 
+#OHLCV 
 for t in range(len(ticker)):
 	#사이트 html 가져오기
 	url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker[t].code
 	user_agent = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
 	r = requests.get(url, headers = user_agent, auth=('user', 'pass'))
-	data = r.text
-	soup = BeautifulSoup(data, "html.parser")
+	d = r.text
+	soup = BeautifulSoup(d, "html.parser")
 	#page 수 찾기 
 	for end in soup.find_all('a', href=True):
 		pass
-	page = re.findall('\d+', end['href'][-3:])[0]
+	page = re.findall('\d+', end['href'][-4:])[0]
 
 
 	for p in range(1, int(page)+1):

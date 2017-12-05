@@ -106,39 +106,39 @@ def main():
     krx.closeKRX()
 
 
-    # #객체 생성
-    # kos = KosFile("C:\\Users\\SeheeKim\\Downloads")
-    # #다운로드 폴더로 이동 
-    # kos.moveToFileDirection()
+    #객체 생성
+    kos = KosFile("C:\\Users\\SeheeKim\\Downloads")
+    #다운로드 폴더로 이동 
+    kos.moveToFileDirection()
 
 
 
-    # ###코스피
-    # kos.changeToTxt('상장법인목록.xls')
-    # kos.openFile('KOSPI.txt')
+    ###코스피
+    kos.changeToTxt('상장법인목록.xls')
+    kos.openFile('KOSPI.txt')
 
-    # #종목별 코드 찾기 
-    # kospiCompanyCode = kos.findCompanyCode()
+    #종목별 코드 찾기 
+    kospiCompanyCode = kos.findCompanyCode()
 
-    # #코스피 회사명, 회사코드, 종목 저장 
-    # kos.companies(date, kospiCompanyCode, "KP")
+    #코스피 회사명, 회사코드, 종목 저장 
+    kos.companies(date, kospiCompanyCode, "KP")
 
-    # #코스피 파일 지우기 
-    # kos.deleteFile('KOSPI.txt')
+    #코스피 파일 지우기 
+    kos.deleteFile('KOSPI.txt')
 
 
-    # ###코스닥
-    # kos.changeToTxt('상장법인목록(1).xls')
-    # kos.openFile('KOSDAQ.txt')
+    ###코스닥
+    kos.changeToTxt('상장법인목록(1).xls')
+    kos.openFile('KOSDAQ.txt')
 
-    # #종목별 코드 찾기
-    # kosdaqCompanyCode = kos.findCompanyCode()
+    #종목별 코드 찾기
+    kosdaqCompanyCode = kos.findCompanyCode()
 
-    # #코스닥 회사명, 회사코드, 종목 저장 
-    # kos.companies(date, kosdaqCompanyCode, "KD")
+    #코스닥 회사명, 회사코드, 종목 저장 
+    kos.companies(date, kosdaqCompanyCode, "KD")
 
-    # #코스닥 파일 지우기
-    # kos.deleteFile('KOSDAQ.txt')
+    #코스닥 파일 지우기
+    kos.deleteFile('KOSDAQ.txt')
 
 
 
