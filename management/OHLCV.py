@@ -23,7 +23,7 @@ index = 0
 
 
 #Ticker 가져오기(code)
-ticker = Ticker.objects.filter(date=today_date)
+ticker = Ticker.objects.filter(date="20171205")
 
 
 
@@ -36,11 +36,15 @@ if (os.path.isfile("OHLCV_log.txt")):
 	last_company = line
 	f.close()
 
-	while not(OHLCV.objects.filter(code=ticker[index].code) == last_company):
+	while not(ticker[index].code+"\n" == last_company):
 		index += 1
-	index += 1 #중단된 지점 
 	#중단된 회사 ohlcv 삭제 
-	OHLCV.objects.filter(code=ticker[index].code).delete() 
+	OHLCV.objects.filter(code=ticker[index]).delete() 
+
+
+
+
+
 
 
 
@@ -48,10 +52,10 @@ if (os.path.isfile("OHLCV_log.txt")):
 f = open("OHLCV_log.txt", 'w')
 
 #OHLCV 
-for t in range(index, len(ticker)+1):
+for t in range(index, len(ticker)):
 	start_time = time.time()
 	#log 기록(회사 code)
-	f.write(ticker[k].code+"\n")
+	f.write(ticker[t].code+"\n")
 
 	#사이트 html 가져오기
 	url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker[t].code
@@ -102,6 +106,7 @@ for t in range(index, len(ticker)+1):
 
 	print("this comany took..", end_time-start_time)
 	print("average = ", av_time)
+
 f.close()
 
 
