@@ -15,7 +15,6 @@ import os
 #오늘의 날짜
 today_date = datetime.now().strftime("%Y%m%d")
 #걸린 시간
-work_time = []
 av_time = 0
 
 
@@ -24,6 +23,9 @@ index = 0
 
 #Ticker 가져오기(code)
 ticker = Ticker.objects.filter(date="20171205")
+
+
+
 
 
 
@@ -72,11 +74,18 @@ for t in range(index, len(ticker)):
 	for p in range(1, int(page)+1):
 		url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker[t].code + "&page=" + str(p) 
 		df = pd.read_html(url, thousands='')
+
+		#1999년인지 확인
+		date_1999 = False
+
 		if (p==int(page)):
 			for i in range(1, len(df[0])):
 				if(str(df[0].ix[i][0]) == "nan"):
 					break
 				date = df[0].ix[i][0].replace(".", "")
+				if(date[0:4] == '1999'):
+					date_1999 = True
+					break
 				open_price = int(df[0].ix[i][3].replace(",", ""))
 				high_price = int(df[0].ix[i][4].replace(",", ""))
 				low_price = int(df[0].ix[i][5].replace(",", ""))
@@ -88,7 +97,12 @@ for t in range(index, len(ticker)):
 
 		else:
 			for i in range(1,11):
+				if(str(df[0].ix[i][0]) == "nan"):
+					break
 				date = df[0].ix[i][0].replace(".", "")
+				if(date[0:4] == '1999'):
+					date_1999 = True
+					break
 				open_price = int(df[0].ix[i][3].replace(",", ""))
 				high_price = int(df[0].ix[i][4].replace(",", ""))
 				low_price = int(df[0].ix[i][5].replace(",", ""))
@@ -97,11 +111,11 @@ for t in range(index, len(ticker)):
 				#db에 저장
 				data = OHLCV(code=ticker[t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
 				data.save()
-	
-	end_time = time.time()
-	time.sleep(0.5)
+		if(date_1999):
+			break
 
-	work_time.append(end_time-start_time)
+	end_time = time.time()
+
 	av_time = (av_time+(end_time-start_time))/2.0
 
 	print("this comany took..", end_time-start_time)
