@@ -41,12 +41,12 @@ app.conf.beat_schedule = {
 
     'scrape-naver-ohlcv-at-4': {
     	'task': 'scrape_naver_ohlcv',
-    	'schedule': crontab(hour=16),
+    	'schedule': crontab(hour=16, minute=10),
         'args': (),
     },
     'scrape-naver-info-at-4:30': {
         'task': 'scrape_naver_info',
-        'schedule': crontab(hour=16, minute=30),
+        'schedule': crontab(hour=17),
         'args': ()
     }
     
