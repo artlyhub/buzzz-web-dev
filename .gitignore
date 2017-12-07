@@ -5,3 +5,4 @@ sensitives.pickle
 algo_test
 geckodriver.exe
 geckodriver.log
+node_modules

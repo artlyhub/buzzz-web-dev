@@ -3,7 +3,7 @@ Theme Name: buzz style
 Description: theme for buzz
 Author: Etemmu Studio
 Template: buzz
-Version: 0.1.0
+Version: 0.2.0 (20171204 수정)
 */
 
 /*
@@ -230,18 +230,50 @@ header>.header_wrap>.header_top_bar>.header_ratio>.header_logo {
     max-width: 68px;
     pointer-events: all;
 }
+
 header>.header_wrap>.header_top_bar>.header_ratio>.header_logo>a {
     display: block;
     width: 100%;
 }
-header>.header_wrap>.header_top_bar>.header_ratio>.header_myinfo {
-    font-size: 15px;
-    color: #0a163a;
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info {
     float: right;
     pointer-events: all;
 }
-header>.header_wrap>.header_top_bar>.header_ratio>.header_myinfo>strong {
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info>div {
+    display: inline-block;
+    margin-right: 13px;
+    font-size: 15px;
+    color: #0a163a;
+}
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info>div:last-child {
+    margin: 0;
+}
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info>div>a.notice_btn:before {
+    content: '';
+    display: inline-block;
+    background-image: url(/static/img/notice_bell.svg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 19px;
+    height: 22px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info>div>a:hover {
+    color: #27314f;
+    /*color: rgba(39,49,79,.9);*/
+}
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info>div>a.notice_btn {
     font-weight: 700;
+}
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info>div>a {
+    color: #0a163a;
+    cursor: pointer;
+}
+header>.header_wrap>.header_top_bar>.header_ratio>.header_right_info>.mylogin_wrap>a {
+    font-weight: 700;
+
 }
 header>.header_wrap>.header_bottom_bar {
     position: relative;
@@ -249,11 +281,11 @@ header>.header_wrap>.header_bottom_bar {
 }
 header>.header_wrap>.header_bottom_bar>.header_ratio {
     height: 46px;
-    line-height: 45px;
+    line-height: 46px;
     position: relative;
 }
 header>.header_wrap>.header_bottom_bar>.header_ratio>.search_bar {
-    display: inline-block;
+    display: block;
     vertical-align: middle;
     width: 300px;
     height: 30px;
@@ -265,6 +297,7 @@ header>.header_wrap>.header_bottom_bar>.header_ratio>.search_bar {
     float: left;
     margin: 8px 0;
     pointer-events: all;
+    clear: both;
 }
 header>.header_wrap>.header_bottom_bar>.header_ratio>.search_bar>.search_icon {
     display: block;
@@ -351,7 +384,7 @@ header>.header_wrap>.header_bottom_bar>.header_ratio>.my_portfolio_btn>a>svg {
     width: 31px;
     float: left;
     display: block;
-    height: 45px;
+    height: 46px;
 }
 header>.identity_btn_wrap {
     margin-top: 15px;
@@ -640,10 +673,7 @@ section, .row_wrap, .content_row_wrap {
     color:  #ffd44f;
     font-size: 15px;
 }
-.popup_input_wrap>.popup_col>#register_email {
-    width: calc(100% - 130px);
-    margin-right: 17px;
-}
+.popup_input_wrap>.popup_col>#register_email,
 .popup_input_wrap>.popup_col>#login_email {
     /*width: calc(100% - 130px);*/
     margin-right: 17px;

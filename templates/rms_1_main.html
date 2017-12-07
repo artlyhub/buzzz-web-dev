@@ -45,13 +45,22 @@ data-page에 메인페이지 인지 서브페이지 인지 구분해주세요~!
                             </a>
                             <!--END 헤더로고 부분 링크 홈으로 걸어주세요-->
                         </div>
-                        <!--header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
                         {% if user.is_authenticated %}
-                        <div class="header_myinfo">
-                            환영합니다 <strong>{{ user.username }}({{ user.email }})</strong> 회원님!
-                        </div>
-                        {% endif %}
-                        <!--END header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
+                        <div class="header_right_info">
+                          <div class="myinfo_wrap">
+                              <a href="" class="notice_btn">notice</a>
+                              <span>|</span>
+                              <!--header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
+                              <span class="header_myname">{{ user.username }}({{ user.email }})</span>
+                              <!--END header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
+                              <span>|</span>
+                              <a href="">회원정보</a>
+                          </div>
+                          <div class="mylogin_wrap">
+                              <a href="{% url 'logout' %}" class="logout_btn">LOGOUT</a>
+                          </div>
+                      </div>
+                      {% endif %}
                     </div>
                 </div>
                 <div class="header_bottom_bar">

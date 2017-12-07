@@ -7,9 +7,9 @@ SIGNAL = (
 )
 
 RATING = (
-    'A',
-    'B',
-    'C',
+    ('A', 'Strong'),
+    ('B', 'Normal'),
+    ('C', 'Weak')
 )
 
 

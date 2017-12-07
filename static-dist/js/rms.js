@@ -24,7 +24,14 @@
     });
 
     $(document).on('click', '#rms_save_list', function (){
-        $('#rms_search_list').toggleClass('active');
+        // $('#rms_search_list').toggleClass('active');
+        $("#rms_search_list").addClass('active');
+    });
+
+    $(document).on('keydown', '#search_code', function (){
+      if (e.keyCode == 13) {
+        $("#rms_search_list").addClass('active');
+      }
     });
 
     $(document).on('click', '#search_list_submit', function (){
