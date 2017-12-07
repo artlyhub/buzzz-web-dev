@@ -11,9 +11,21 @@
 
         nav_next.click(function(){
             var page_num = parseInt($('.slider_col.active').attr('data-num'))
+
+            // on page slide - default behaviors override
             if (page_num == 3) {
               location.href = '/rms'
+            } else if (page_num == 1) {
+              var capital_amt = $('#capital_set').val()
+              if (!capital_amt | 0 === capital_amt.length) {
+                $('#capital_amt').text('10,000,000원')
+              } else {
+                $('#capital_amt').text(String(capital_amt) + '원')
+              }
+            } else if (page_num == 2) {
+              $('#kinds_type').text('현금 + 주식형')
             }
+
             var origin_click = parseInt(origin_cotainer.attr('data-click'));
             col.removeClass('active');
 

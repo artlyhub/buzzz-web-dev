@@ -28,7 +28,7 @@
         $("#rms_search_list").addClass('active');
     });
 
-    $(document).on('keydown', '#search_code', function (){
+    $(document).on('keydown', '#search_code', function (e){
       if (e.keyCode == 13) {
         $("#rms_search_list").addClass('active');
       }

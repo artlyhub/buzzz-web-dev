@@ -3,6 +3,8 @@ from rest_framework import status
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.csrf import csrf_exempt
 
 from portfolio.api.serializers import (
     PortfolioSerializer,
@@ -16,11 +18,20 @@ from utils.paginations import UserResultPagination, StandardResultPagination
 
 User = get_user_model()
 
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
+
+
+# @method_decorator(csrf_exempt, name='dispatch')
 class PortfolioAPIView(generics.ListCreateAPIView):
     queryset = Portfolio.objects.all().order_by('-id')
     serializer_class = PortfolioSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    authentication_classes = (CsrfExemptSessionAuthentication,)
     pagination_class = StandardResultPagination
 
     def create(self, request, *args, **kwargs):
@@ -37,6 +48,17 @@ class PortfolioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    authentication_classes = (CsrfExemptSessionAuthentication,)
+
+    def put(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = request.data.copy()
+        data['user'] = request.user
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 
 class PortfolioHistoryAPIView(generics.ListCreateAPIView):

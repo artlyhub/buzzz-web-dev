@@ -9,5 +9,5 @@ from rms.views import (
 
 urlpatterns = [
     url(r'^$', RMSHomeView.as_view(), name='home'),
-    url(r'^start/$', RMSStartView.as_view(), name='start'), 
+    url(r'^start/$', RMSStartView.as_view(), name='start'),
 ]

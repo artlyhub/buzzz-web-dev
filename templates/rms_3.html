@@ -160,6 +160,7 @@ message_on을 클래스명에 넣어주세요
                                 <input id="save_name" class="col" type="text" placeholder="포트폴리오 이름.">
                                 <a id="save_name_btn" class="col">저장</a>
                             </div>
+                            <div id="saved_port_id" value=""></div>
                         </div>
                     </li>
                 </ul>
@@ -186,6 +187,9 @@ message_on을 클래스명에 넣어주세요
                                             <div id="capital_set_wrap" class="clear_col">
                                                 <label for="capital_set" class="col">금액</label>
                                                 <input id="capital_set" class="col" type="text" placeholder="10,000,000 원" maxlength="18">
+                                            </div>
+                                            <div class="error-msg">
+                                              <p id="msg-area" style="text-align: center; margin-top: -10px; margin-bottom: 22px;"></p>
                                             </div>
                                             <div class="slider_btn_wrap">
                                                 <a id="save_capital_btn" class="slider_btn">자본금 설정 저장</a>

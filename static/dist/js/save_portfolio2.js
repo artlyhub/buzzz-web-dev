@@ -1,27 +1,38 @@
 ( function($) {
 
+    // function formatNumber(num) {
+    //   // return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    //   return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    // }
+
     // 1st page: set capital amount to 10000000 if not given
-    $(document).on('click', '#save_capital_btn', function () {
+    function set_capital() {
       var capital_amt = $('#capital_set').val()
       if (!capital_amt | 0 === capital_amt.length) {
+        $('#msg-area').text('')
         $('#capital_amt').text('10,000,000원')
         $('#slider_next').click()
       } else {
-        $('#capital_amt').text(String(capital_amt) + '원')
-        $('#slider_next').click()
+        if (isNaN(Number(capital_amt))) {
+          var msg = '자본금을 다시 한 번 입력해주세요'
+          $('#msg-area').text(msg)
+          $('#capital_set').val('')
+        } else {
+          $('#msg-area').text('')
+          var formatted_capital = parseInt(capital_amt).toLocaleString()
+          $('#capital_amt').text(formatted_capital + '원')
+          $('#slider_next').click()
+        }
       }
+    }
+
+    $(document).on('click', '#save_capital_btn', function () {
+      set_capital()
     })
 
     $(document).on('keydown', '#capital_set', function (e) {
       if (e.keyCode == 13) {
-        var capital_amt = $('#capital_set').val()
-        if (!capital_amt | 0 === capital_amt.length) {
-          $('#capital_amt').text('0')
-          $('#slider_next').click()
-        } else {
-          $('#capital_amt').text(String(capital_amt) + '원')
-          $('#slider_next').click()
-        }
+        set_capital()
       }
     })
 
@@ -102,6 +113,7 @@
       var search_code = $('#search_code').val()
       if (search_code != '') {
         check_recent_ticker_update(search_code)
+        $('#search_code').val('')
       } else if (search_code == '') {
         // pass
       }
@@ -112,6 +124,7 @@
           var search_code = $('#search_code').val()
           if (search_code != '') {
             check_recent_ticker_update(search_code)
+            $('#search_code').val('')
           } else if (search_code == '') {
             // pass
           }
@@ -130,16 +143,43 @@
     })
 
     // last step: save portfolio data to server
-    function save_portfolio_data() {
-      var capital = parseInt($('#capital_set').val())
+
+    // function getCookie(name) {
+    //   var cookieValue = null
+    //   if (document.cookie && document.cookie !== '') {
+    //       var cookies = document.cookie.split(';')
+    //       for (var i = 0; i < cookies.length; i++) {
+    //           var cookie = jQuery.trim(cookies[i])
+    //           // Does this cookie string begin with the name we want?
+    //           if (cookie.substring(0, name.length + 1) === (name + '=')) {
+    //               cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+    //               break;
+    //           }
+    //       }
+    //   }
+    //   return cookieValue;
+    // }
+
+    function save_portfolio_data(name, capital, type_raw) {
+      // var csrftoken = getCookie('csrftoken')
+
+      var type
+      if (type_raw == '주식형') {
+        type = 'S'
+      } else if (type_raw == '현금 + 주식형') {
+        type = 'CS'
+      }
       $.ajax({
         method: "POST",
         url: '/api/portfolio/',
         data: {
+            'name': name,
             'capital': capital,
+            'portfolio_type': type,
+            // 'csrfmiddlewaretoken': csrftoken
         },
         success: function(data){
-          $('#capital_amt').text(String(data.capital) + '원')
+          $('#saved_port_id').attr('value', data.id)
         },
         error: function(data){
           console.log('error')
@@ -147,5 +187,81 @@
         }
       })
     }
+
+    function update_portfolio_data(portfolio_id, name, capital, type_raw) {
+      var type
+      if (type_raw == '주식형') {
+        type = 'S'
+      } else if (type_raw == '현금 + 주식형') {
+        type = 'CS'
+      }
+      $.ajax({
+        type: "PUT",
+        dataType: "json",
+        url: '/api/portfolio/' + String(portfolio_id) + '/',
+        data: {
+            'id': parseInt(portfolio_id),
+            'name': name,
+            'capital': capital,
+            'portfolio_type': type,
+        },
+        success: function(data){
+          console.log(data)
+        },
+        error: function(data){
+          console.log('error')
+          console.log(data)
+        }
+      })
+    }
+
+    function save_portfolio_on_click() {
+      var name = $('#save_name').val()
+      var capital = parseInt($('#capital_amt').text().replace(/,/g , '').replace('원', ''))
+      var type_raw = $('#kinds_type').text()
+
+      if (name == '') {
+        var d = new Date()
+        var year = d.getFullYear()
+        var month = d.getMonth().pad(2)
+        var date = d.getDate().pad(2)
+        var hours = d.getHours().pad(2)
+        var mins = d.getMinutes().pad(2)
+        name = year + month + date + hours + mins
+      }
+
+      if (!isNaN(capital) && type_raw != '') {
+        if ($('#saved_port_id').attr('value') != '') {
+          update_portfolio_data($('#saved_port_id').attr('value'), name, capital, type_raw)
+          $('#save_submit_pop').removeClass('active')
+        } else {
+          save_portfolio_data(name, capital, type_raw)
+          $('#save_submit_pop').removeClass('active')
+        }
+      }
+
+      else if (!isNaN(capital) && type_raw == '') {
+        if ($('#saved_port_id').attr('value') != '') {
+          update_portfolio_data($('#saved_port_id').attr('value'), name, capital, '현금 + 주식형')
+          $('#save_submit_pop').removeClass('active')
+        } else {
+          save_portfolio_data(name, capital, '현금 + 주식형')
+          $('#save_submit_pop').removeClass('active')
+        }
+      }
+
+      else {
+        $('#save_submit_pop').removeClass('active')
+      }
+
+    }
+
+    $(document).on('click', '.slider_btn2', function () {
+      save_portfolio_on_click()
+    })
+
+    $(document).on('click', '#save_name_btn', function () {
+      save_portfolio_on_click()
+    })
 
 })(jQuery);

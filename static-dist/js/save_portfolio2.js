@@ -1,31 +1,22 @@
 ( function($) {
 
-    function save_portfolio_data() {
-      var capital = parseInt($('#capital_set').val())
-      $.ajax({
-        method: "POST",
-        url: '/api/portfolio/',
-        data: {
-            'capital': capital,
-        },
-        success: function(data){
-          $('#capital_amt').text(String(data.capital) + '원')
-        },
-        error: function(data){
-          console.log('error')
-          console.log(data)
-        }
-      })
+    function formatNumber(num) {
+      // return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+      return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
     }
 
+    // 1st page: set capital amount to 10000000 if not given
     $(document).on('click', '#save_capital_btn', function () {
       var capital_amt = $('#capital_set').val()
       if (!capital_amt | 0 === capital_amt.length) {
         $('#capital_amt').text('10,000,000원')
         $('#slider_next').click()
       } else {
-        $('#capital_amt').text(String(capital_amt) + '원')
-        $('#slider_next').click()
+        if (typeof parseInt(capital_amt) === 'number') {
+          var formatted_capital = formatNumber(capital_amt)
+          $('#capital_amt').text(formatted_capital + '원')
+          $('#slider_next').click()
+        }
       }
     })
 
@@ -36,12 +27,16 @@
           $('#capital_amt').text('0')
           $('#slider_next').click()
         } else {
-          $('#capital_amt').text(String(capital_amt) + '원')
-          $('#slider_next').click()
+          if (typeof parseInt(capital_amt) === 'number') {
+            var formatted_capital = formatNumber(capital_amt)
+            $('#capital_amt').text(formatted_capital + '원')
+            $('#slider_next').click()
+          }
         }
       }
     })
 
+    // 2nd page: set portfolio type to stock and cash if not chosen
     $(document).on('click', '#stock_btn', function () {
       $('#kinds_type').text('주식형')
       $('#slider_next').click()
@@ -52,6 +47,7 @@
       $('#slider_next').click()
     })
 
+    // 3rd page
     Number.prototype.pad = function(size) {
       var s = String(this);
       while (s.length < (size || 2)) {s = "0" + s;}
@@ -98,14 +94,18 @@
     }
 
     function add_code_list(name, ticker) {
-      var code_list = `
-      <div class="list_col">
-          <div class="list_col_title">{0} {1}</div>
-          <a class="list_del_btn">삭제</a>
-      </div>
-      `.format(name, ticker)
-      $('.search_list').append(code_list)
-      codes_list.push(ticker)
+      if ($.inArray(ticker, codes_list) != -1) {
+        // pass
+      } else {
+        var code_list = `
+        <div class="list_col">
+            <div class="list_col_title">{0} {1}</div>
+            <a class="list_del_btn">삭제</a>
+        </div>
+        `.format(name, ticker)
+        $('.search_list').append(code_list)
+        codes_list.push(ticker)
+      }
     }
 
     var codes_list = []
@@ -113,16 +113,18 @@
       var search_code = $('#search_code').val()
       if (search_code != '') {
         check_recent_ticker_update(search_code)
+        $('#search_code').val('')
       } else if (search_code == '') {
         // pass
       }
     })
 
-    $(document).on('keydown', '#search_code', function () {
+    $(document).on('keydown', '#search_code', function (e) {
         if (e.keyCode == 13) {
           var search_code = $('#search_code').val()
           if (search_code != '') {
             check_recent_ticker_update(search_code)
+            $('#search_code').val('')
           } else if (search_code == '') {
             // pass
           }
@@ -138,6 +140,30 @@
         return code != ticker
       })
       $(this).parents('.list_col').remove()
+    })
+
+    // last step: save portfolio data to server
+    function save_portfolio_data() {
+      var capital = parseInt($('#capital_amt').text().replace(/,/g , '').replace('원', ''))
+      console.log(capital)
+      // $.ajax({
+      //   method: "POST",
+      //   url: '/api/portfolio/',
+      //   data: {
+      //       'capital': capital,
+      //   },
+      //   success: function(data){
+      //     $('#capital_amt').text(String(data.capital) + '원')
+      //   },
+      //   error: function(data){
+      //     console.log('error')
+      //     console.log(data)
+      //   }
+      // })
+    }
+
+    $(document).on('click', '.slider_btn2', function () {
+      save_portfolio_data()
     })
 
 })(jQuery);
