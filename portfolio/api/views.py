@@ -14,6 +14,9 @@ from portfolio.models import (
     Portfolio,
     PortfolioHistory,
 )
+from restapi.models import (
+    Ticker,
+)
 from utils.paginations import UserResultPagination, StandardResultPagination
 
 User = get_user_model()
@@ -65,7 +68,18 @@ class PortfolioHistoryAPIView(generics.ListCreateAPIView):
     queryset = PortfolioHistory.objects.all()
     serializer_class = PortfolioHistorySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    authentication_classes = (CsrfExemptSessionAuthentication,)
     pagination_class = StandardResultPagination
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['portfolio'] = Portfolio.objects.get(id=data['portfolio']).id
+        data['code'] = Ticker.objects.filter(code=data['code']).order_by('-id').first().id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PortfolioHistoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
