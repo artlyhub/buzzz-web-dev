@@ -76,13 +76,19 @@ class KosFile():
         return self.kosSoup.select('td[style*="@"]')
 
     #회사 정보 가져와서 저장 
-    def companies(self, date, companyCode, market):
+    def companies(self, file_name, date, companyCode, market):
+        f = open(file_name, 'w')
+
         for i in range(len(companyCode)): 
-        #save in sqlite
             company = companyCode[i].find_previous_sibling('td').string
             code = companyCode[i].string 
+            industry = companyCode[i].find_next().string
+            #industry 저장
+            f.write(industry+"\n")
+            #db에 저장 
             data = Ticker(code=code, date=date, name=company, market_type=market)
             data.save()
+        f.close()
 
 
 
@@ -119,7 +125,7 @@ def main():
     kospiCompanyCode = kos.findCompanyCode()
 
     #코스피 회사명, 회사코드, 종목 저장 
-    kos.companies(date, kospiCompanyCode, "KP")
+    kos.companies("C:\\Users\\SeheeKim\\Project\\buzzz-web-dev\\data\\"+date+"_kospi_industry.txt", date, kospiCompanyCode, "KP")
 
     #코스피 파일 지우기 
     kos.deleteFile('KOSPI.txt')
@@ -134,7 +140,7 @@ def main():
     kosdaqCompanyCode = kos.findCompanyCode()
 
     #코스닥 회사명, 회사코드, 종목 저장 
-    kos.companies(date, kosdaqCompanyCode, "KD")
+    kos.companies("C:\\Users\\SeheeKim\\Project\\buzzz-web-dev\\data\\"+date+"_kosdaq_industry.txt", date, kosdaqCompanyCode, "KD")
 
     #코스닥 파일 지우기
     kos.deleteFile('KOSDAQ.txt')
