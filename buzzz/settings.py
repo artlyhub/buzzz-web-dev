@@ -157,7 +157,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 if not DEBUG:
     CELERY_BROKER_URL = 'redis://localhost:6379'
-    CELERY_RESULT_BACKEND = 'amqp://localhost:6379'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 else:
     CELERY_BROKER_URL = 'amqp://localhost'
     CELERY_RESULT_BACKEND = 'amqp://localhost'
