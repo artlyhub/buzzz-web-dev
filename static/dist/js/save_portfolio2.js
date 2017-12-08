@@ -82,9 +82,13 @@
         method: "GET",
         url: '/api/ticker/?date=' + date + '&code=' + ticker,
         success: function(data){
-          var name = data.results[0].name
-          var ticker = data.results[0].code
-          add_code_list(name, ticker)
+          if (data.results.length > 0) {
+            var name = data.results[0].name
+            var ticker = data.results[0].code
+            add_code_list(name, ticker)
+          } else {
+            // pass
+          }
         },
         error: function(data){
           console.log('error')
@@ -234,18 +238,13 @@
     }
 
     function save_code_list(portfolio_id, code) {
-      var d = new Date()
-      var year = d.getFullYear()
-      var month = d.getMonth().pad(2)
-      var date = d.getDate().pad(2)
-      var date_data = year + month + date
       var status = 'B'
       $.ajax({
         method: "POST",
         url: '/api/history/',
         data: {
             'portfolio': portfolio_id,
-            'date': date_data,
+            'date': '',
             'code': code,
             'status': status,
             'price': 0

@@ -9,21 +9,40 @@
         var col = $('.slider_col');
         container.attr('data-all', count);
 
-        nav_next.click(function(){
+        $(document).on('click', '#slider_next', function() {
             var page_num = parseInt($('.slider_col.active').attr('data-num'))
 
             // on page slide - default behaviors override
             if (page_num == 3) {
               location.href = '/rms'
-            } else if (page_num == 1) {
+            }
+
+            else if (page_num == 1) {
               var capital_amt = $('#capital_set').val()
               if (!capital_amt | 0 === capital_amt.length) {
+                $('#msg-area').text('')
                 $('#capital_amt').text('10,000,000원')
               } else {
-                $('#capital_amt').text(String(capital_amt) + '원')
+
+                if (isNaN(Number(capital_amt))) {
+                  var msg = '자본금을 다시 한 번 입력해주세요'
+                  $('#msg-area').text(msg)
+                  $('#capital_set').val('')
+                } else {
+                  $('#msg-area').text('')
+                  var formatted_capital = parseInt(capital_amt).toLocaleString()
+                  $('#capital_amt').text(formatted_capital + '원')
+                }
+
               }
-            } else if (page_num == 2) {
-              $('#kinds_type').text('현금 + 주식형')
+            }
+
+            else if (page_num == 2) {
+              if ($('#kinds_type').text() == '주식형') {
+                // pass
+              } else {
+                $('#kinds_type').text('현금 + 주식형')
+              }
             }
 
             var origin_click = parseInt(origin_cotainer.attr('data-click'));

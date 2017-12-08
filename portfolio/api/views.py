@@ -74,7 +74,9 @@ class PortfolioHistoryAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         data['portfolio'] = Portfolio.objects.get(id=data['portfolio']).id
-        data['code'] = Ticker.objects.filter(code=data['code']).order_by('-id').first().id
+        ticker = Ticker.objects.filter(code=data['code']).order_by('-id').first()
+        data['code'] = ticker.id
+        data['date'] = ticker.date
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
