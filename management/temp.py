@@ -1,0 +1,15 @@
+import pickle
+import os
+
+with open('../sensitives.pickle', 'rb') as f:
+	data = pickle.load(f)
+	print(data)
+
+f.close()
+print(data['IP_ADDRESS'])
+
+# data['IP_ADDRESS'] = '45.32.249.71'
+
+# pickle.dump(data, open("../sensitives.pickle", "wb"))
+
+

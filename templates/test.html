@@ -1,16 +1,69 @@
-<style>
-h1 {
-  text-align: center;
-  margin-top: 7px;
-}
+{% load static %}
+<html>
+	<head>
+		{% include "base_assets.html" %}
+		<script src="{% static 'highcharts/code/highcharts.js' %}" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="container" style="height: 400px; width: 500px"></div>
+		<script type="text/javascript">
+		(function($) {
+			var chart = new Highcharts.Chart({
 
-p {
-  text-align: center;
-}
-</style>
+					title: {
+					    text: '',
+					    style: {
+					        display: 'none'
+					    }
+					},
 
-<h1>BUZZZ</h1>
+					subtitle: {
+					    text: '',
+					    style: {
+					        display: 'none'
+					    }
+					},
 
-<hr>
+					chart: {
+							renderTo: 'container',
+							type: 'pie',
+							backgroundColor: '#FCFFC5',
+					},
 
-<p>Do you hear that? Buzzzzzzz</p>
+					credits: {
+							enabled: false
+					},
+
+					plotOptions: {
+							pie: {
+									borderColor: '#FCFFC5',
+									innerSize: '60%'
+							}
+					},
+
+					series: [{
+							data: [
+									{['Firefox', 44.2], name: '비중'},
+									['IE7', 26.6],
+									['IE6', 20],
+									['Chrome', 3.1],
+									['Other', 5.4]
+									]}]
+				},
+				// using
+
+				function(chart) { // on complete
+						var xpos = '50%';
+						var ypos = '53%';
+						var circleradius = 102;
+
+				// Render the circle
+				chart.renderer.circle(xpos, ypos, circleradius).attr({
+						fill: '#FCFFC5',
+				}).add();
+
+			});
+		})(jQuery)
+		</script>
+	</body>
+</html>

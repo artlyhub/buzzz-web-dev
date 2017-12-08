@@ -1,0 +1,50 @@
+1512290182817	geckodriver	INFO	geckodriver 0.19.1
+1512290182988	geckodriver	INFO	Listening on 127.0.0.1:50256
+1512290184969	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\SeheeKim\\AppData\\Local\\Temp\\rust_mozprofile.WZUaOZoIAubK"
+1512290186217	Marionette	INFO	Enabled via --marionette
+Unable to read VR Path Registry from C:\Users\SeheeKim\AppData\Local\openvr\openvrpaths.vrpath
+[Child 3940, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+1512290189177	Marionette	INFO	Listening on port 50262
+1512290190202	Marionette	WARN	TLS certificate errors will be ignored for this session
+1512290190281	Marionette	DEBUG	Register listener.js for window 4294967297
+1512290190302	Marionette	DEBUG	Received DOM event "beforeunload" for "about:blank"
+1512290190501	Marionette	DEBUG	Received DOM event "pagehide" for "about:blank"
+1512290190501	Marionette	DEBUG	Received DOM event "unload" for "about:blank"
+1512290191327	Marionette	DEBUG	Received DOM event "DOMContentLoaded" for "http://kind.krx.co.kr/corpgeneral/corpList.do?method=loadInitPage"
+Unable to read VR Path Registry from C:\Users\SeheeKim\AppData\Local\openvr\openvrpaths.vrpath
+JavaScript warning: http://kind.krx.co.kr/js/akc.js, line 1021: unreachable code after return statement
+JavaScript warning: http://kind.krx.co.kr/js/akc_top.js, line 973: unreachable code after return statement
+1512290191679	Marionette	DEBUG	Received DOM event "pageshow" for "http://kind.krx.co.kr/corpgeneral/corpList.do?method=loadInitPage"
+1512290195923	Marionette	DEBUG	Canceled page load listener because no navigation has been detected
+1512290207410	Marionette	DEBUG	Canceled page load listener because no navigation has been detected
+Unable to read VR Path Registry from C:\Users\SeheeKim\AppData\Local\openvr\openvrpaths.vrpath
+[Parent 9780, Gecko_IOThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+[Child 10972, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+[Child 10972, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+Unable to read VR Path Registry from C:\Users\SeheeKim\AppData\Local\openvr\openvrpaths.vrpath
+[Child 11612, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+[Child 11612, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+
+KLIB_SelfTest return : KLR_OK
+1512370443249	geckodriver	INFO	geckodriver 0.19.1
+1512370443381	geckodriver	INFO	Listening on 127.0.0.1:52455
+1512370445360	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "-marionette" "-profile" "C:\\Users\\SeheeKim\\AppData\\Local\\Temp\\rust_mozprofile.DBOLdlienC5x"
+1512370446288	Marionette	INFO	Enabled via --marionette
+Unable to read VR Path Registry from C:\Users\SeheeKim\AppData\Local\openvr\openvrpaths.vrpath
+[Child 1180, Chrome_ChildThread] WARNING: pipe error: 109: file z:/build/build/src/ipc/chromium/src/chrome/common/ipc_channel_win.cc, line 346
+1512370448819	Marionette	INFO	Listening on port 52461
+1512370449099	Marionette	WARN	TLS certificate errors will be ignored for this session
+1512370449165	Marionette	DEBUG	Register listener.js for window 4294967297
+1512370449224	Marionette	DEBUG	Received DOM event "beforeunload" for "about:blank"
+1512370449474	Marionette	DEBUG	Received DOM event "pagehide" for "about:blank"
+1512370449474	Marionette	DEBUG	Received DOM event "unload" for "about:blank"
+1512370451104	Marionette	DEBUG	Received DOM event "DOMContentLoaded" for "http://kind.krx.co.kr/corpgeneral/corpList.do?method=loadInitPage"
+Unable to read VR Path Registry from C:\Users\SeheeKim\AppData\Local\openvr\openvrpaths.vrpath
+JavaScript warning: http://kind.krx.co.kr/js/akc.js, line 1021: unreachable code after return statement
+JavaScript warning: http://kind.krx.co.kr/js/akc_top.js, line 973: unreachable code after return statement
+1512370452212	Marionette	DEBUG	Received DOM event "pageshow" for "http://kind.krx.co.kr/corpgeneral/corpList.do?method=loadInitPage"
+1512370456453	Marionette	DEBUG	Canceled page load listener because no navigation has been detected
+1512370467960	Marionette	DEBUG	Canceled page load listener because no navigation has been detected

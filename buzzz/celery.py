@@ -22,13 +22,13 @@ def debug_task(self):
 
 from celery.schedules import crontab
 
-app.conf.beat_schedule = {
-    'bithumb_get_orderbook_every_minute': {
-        'task': 'bithumb_get_base_orderbook',
-        'schedule': crontab(),
-        'args': (),
-    },
-}
+# app.conf.beat_schedule = {
+#     'bithumb_get_orderbook_every_minute': {
+#         'task': 'bithumb_get_base_orderbook',
+#         'schedule': crontab(),
+#         'args': (),
+#     },
+# }
 
 import random
 
@@ -38,6 +38,11 @@ app.conf.beat_schedule = {
 #        'schedule': 5.0,
 #        'args': (random.randint(1, 100), random.randint(1, 100)),
 #    },
+    'bithumb_get_orderbook_every_minute': {
+        'task': 'bithumb_get_base_orderbook',
+        'schedule': crontab(),
+        'args': (),
+    },
 
     'scrape-naver-ohlcv-at-4': {
     	'task': 'scrape_naver_ohlcv',
@@ -49,5 +54,5 @@ app.conf.beat_schedule = {
         'schedule': crontab(hour=16, minute=30),
         'args': ()
     }
-    
+
  }
