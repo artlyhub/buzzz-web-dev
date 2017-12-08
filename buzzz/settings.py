@@ -23,7 +23,7 @@ DEBUG = sensitives['DEBUG']
 
 ALLOWED_HOSTS = [IP_ADDRESS, '127.0.0.1', '127.0.1.1']
 
-if DEBUG == True:
+if not DEBUG:
     ALLOWED_HOSTS += ['buzzz.co.kr', 'www.buzzz.co.kr']
 
 # Application definition
@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'buzzz.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-if DEBUG == True:
+if not DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -148,14 +148,14 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-if DEBUG == True:
+if not DEBUG:
     REST_FRAMEWORK = {
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
         )
     }
 
-if DEBUG == True:
+if not DEBUG:
     CELERY_BROKER_URL = 'redis://localhost:6379'
     CELERY_RESULT_BACKEND = 'amqp://localhost:6379'
 else:
