@@ -47,35 +47,31 @@ ticker = df
 
 
 
+#중단된 지점 확인
+if (os.path.isfile("OHLCV_log.txt")):
+	f = open("OHLCV_log.txt", 'r')
+	#마지막 줄 회사 code만 읽어오기 
+	for line in f:
+		pass
+	last_company = line
+	f.close()
 
-# #중단된 지점 확인
-# if (os.path.isfile("OHLCV_log.txt")):
-# 	f = open("OHLCV_log.txt", 'r')
-# 	#마지막 줄 회사 code만 읽어오기 
-# 	for line in f:
-# 		pass
-# 	last_company = line
-# 	f.close()
-
-# 	while not(ticker[index].code+"\n" == last_company):
-# 		index += 1
-# 	#중단된 회사 ohlcv 삭제 
-# 	OHLCV.objects.filter(code=ticker[index]).delete() 
-
+	while not(ticker['code'][index]+"\n" == last_company):
+		index += 1
+	#중단된 회사 ohlcv 삭제 
+	OHLCV.objects.filter(code=ticker['code'][index]).delete() 
 
 
 
 
 
-#코스닥
-#필터링 귀차..ㄴ..
-index = 775
+
 
 #log파일 열기 
 f = open("OHLCV_log.txt", 'w')
 
 #OHLCV 
-for t in range(index, len(ticker)):
+for t in range(index, 401):
 	start_time = time.time()
 	#log 기록(회사 code)
 	f.write(ticker['code'][t]+"\n")
