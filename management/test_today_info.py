@@ -9,10 +9,10 @@ import requests
 #오늘의 날짜 
 today_date = datetime.now().strftime("%Y%m%d")
 
-#모델 가져오기 
+# #모델 가져오기 
 ticker = Ticker.objects.filter(date=today_date)
-ohlcv = OHLCV.objects.filter(date=today_date)
-
+# ohlcv = OHLCV.objects.filter(date=today_date)
+print(ticker)
 
 for i in range(len(ticker)):
     url = "http://finance.naver.com/item/main.nhn?code="+ticker[i].code
@@ -22,17 +22,35 @@ for i in range(len(ticker)):
     soup = BeautifulSoup(d, "html.parser")
 
 
-    table = soup.find('div', {'class' : 'first'}).find_next().find_all('em')
+    table = soup.find('div', {'class' : 'first'})
+    #정보가 아예 없는 케이스도 있으려나? 있으면 빨리 발견됫으면...
 
     size_type = 'S' #tmp
     style_type = 'G' #tmp
-    face_val = int(table[3].string.replace(",", ""))
-    stock_nums = int(table[2].string.replace(",", ""))
+        
+
+    #액면가  
+    face_val = table.find(text="액면가")
+    if(face_val == None):
+        #해당 정보가 없는 경우 
+        face_val = 0
+    else:
+        face_val = int(face_val.find_next().find_next().find_next().string.replace(",", ""))
+
+    #상장주식수
+    stock_nums = table.find(text="상장주식수")
+    if (stock_nums == None):
+        stock_nums = 0
+    else:
+        stock_nums = int(stock_nums.find_next().string.replace(",", ""))
+
     # #시가총액
     close_price = ohlcv[i].close_price
     market_cap = close_price*stock_nums
+    
     #시가총액 순위
-    market_cap_rank = 0
+    market_cap_rank = 0 #tmp
+    
     #산업
     industry = "NON" #tmp
 
@@ -123,4 +141,9 @@ for i in range(len(Info.objects.filter(date=today_date))):
 
 
 
+
+
+# #데이터 삭제 
+# for info in Info.objects.filter(date=today_date):
+#     info.delete()
 

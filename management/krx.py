@@ -77,13 +77,13 @@ class KosFile():
 
     #회사 정보 가져와서 저장 
     def companies(self, file_name, date, companyCode, market):
-        f = open(file_name, 'w')
+        # f = open(file_name, 'w')
 
         for i in range(len(companyCode)): 
             company = companyCode[i].find_previous_sibling('td').string
             code = companyCode[i].string 
             industry = companyCode[i].find_next().string
-            #industry 저장
+            industry 저장
             f.write(industry+"\n")
             #db에 저장 
             data = Ticker(code=code, date=date, name=company, market_type=market)

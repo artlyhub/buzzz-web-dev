@@ -22,7 +22,7 @@ index = 0
 
 
 #Ticker 가져오기(code)
-ticker = Ticker.objects.filter(date="20171205")
+ticker = Ticker.objects.filter(date=today_date)
 
 
 
@@ -98,7 +98,7 @@ for t in range(index, len(ticker)):
 		else:
 			for i in range(1,11):
 				if(str(df[0].ix[i][0]) == "nan"):
-					break
+					continue
 				date = df[0].ix[i][0].replace(".", "")
 				if(date[0:4] == '1999'):
 					date_1999 = True
@@ -114,14 +114,26 @@ for t in range(index, len(ticker)):
 		if(date_1999):
 			break
 
+
 	end_time = time.time()
 
 	av_time = (av_time+(end_time-start_time))/2.0
 
-	print("this comany took..", end_time-start_time)
+	print(str(i)+" comany took..", end_time-start_time)
 	print("average = ", av_time)
 
 f.close()
+
+
+
+
+
+
+
+
+
+
+
 
 
 
