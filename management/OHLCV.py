@@ -22,10 +22,27 @@ index = 0
 
 
 #Ticker 가져오기(code)
-ticker = Ticker.objects.filter(date=today_date)
+buzzz_url = 'http://buzzz.co.kr/api/ticker/'
+dest_path = os.getcwd() + '\\tests'
 
+def get_buzzz_data(buzzz_url):
+    r = requests.get(buzzz_url)
+    if r.status_code == 200:
+        data = r.json()
+        df = pd.DataFrame(data['results'])
+        prev_url = data['previous']
+        next_url = data['next']
+        print(buzzz_url)
+    return df, prev_url, next_url
 
+df, prev_url, next_url = get_buzzz_data(buzzz_url)
+while next_url != None:
+    buzzz_url = next_url
+    temp_df, prev_url, next_url = get_buzzz_data(buzzz_url)
+    df = df.append(temp_df, ignore_index=True)
+df.to_csv(dest_path + '\\{}.csv'.format('ticker'), index=False)
 
+ticker = df
 
 
 
@@ -57,10 +74,10 @@ f = open("OHLCV_log.txt", 'w')
 for t in range(index, len(ticker)):
 	start_time = time.time()
 	#log 기록(회사 code)
-	f.write(ticker[t].code+"\n")
+	f.write(ticker['code'][t]+"\n")
 
 	#사이트 html 가져오기
-	url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker[t].code
+	url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker['code'][t]
 	user_agent = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
 	r = requests.get(url, headers = user_agent, auth=('user', 'pass'))
 	d = r.text
@@ -72,7 +89,7 @@ for t in range(index, len(ticker)):
 
 
 	for p in range(1, int(page)+1):
-		url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker[t].code + "&page=" + str(p) 
+		url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker['code'][t] + "&page=" + str(p) 
 		df = pd.read_html(url, thousands='')
 
 		#1999년인지 확인
@@ -92,7 +109,7 @@ for t in range(index, len(ticker)):
 				close_price = int(df[0].ix[i][1].replace(",", ""))
 				volume = int(df[0].ix[i][6].replace(",", ""))
 				#db에 저장
-				data = OHLCV(code=ticker[t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
+				data = OHLCV(code=ticker['id'][t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
 				data.save()
 
 		else:
@@ -109,7 +126,7 @@ for t in range(index, len(ticker)):
 				close_price = int(df[0].ix[i][1].replace(",", ""))
 				volume = int(df[0].ix[i][6].replace(",", ""))
 				#db에 저장
-				data = OHLCV(code=ticker[t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
+				data = OHLCV(code=ticker['id'][t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
 				data.save()
 		if(date_1999):
 			break
