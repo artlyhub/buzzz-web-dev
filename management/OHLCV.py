@@ -46,26 +46,30 @@ ticker = df
 
 
 
-#중단된 지점 확인
-if (os.path.isfile("OHLCV_log.txt")):
-	f = open("OHLCV_log.txt", 'r')
-	#마지막 줄 회사 code만 읽어오기 
-	for line in f:
-		pass
-	last_company = line
-	f.close()
-
-	while not(ticker[index].code+"\n" == last_company):
-		index += 1
-	#중단된 회사 ohlcv 삭제 
-	OHLCV.objects.filter(code=ticker[index]).delete() 
 
 
+# #중단된 지점 확인
+# if (os.path.isfile("OHLCV_log.txt")):
+# 	f = open("OHLCV_log.txt", 'r')
+# 	#마지막 줄 회사 code만 읽어오기 
+# 	for line in f:
+# 		pass
+# 	last_company = line
+# 	f.close()
 
-
+# 	while not(ticker[index].code+"\n" == last_company):
+# 		index += 1
+# 	#중단된 회사 ohlcv 삭제 
+# 	OHLCV.objects.filter(code=ticker[index]).delete() 
 
 
 
+
+
+
+#코스닥
+#필터링 귀차..ㄴ..
+index = 775
 
 #log파일 열기 
 f = open("OHLCV_log.txt", 'w')
@@ -108,8 +112,9 @@ for t in range(index, len(ticker)):
 				low_price = int(df[0].ix[i][5].replace(",", ""))
 				close_price = int(df[0].ix[i][1].replace(",", ""))
 				volume = int(df[0].ix[i][6].replace(",", ""))
+				code = Ticker.objects.filter(id=ticker['id'][t]).first()
 				#db에 저장
-				data = OHLCV(code=ticker['id'][t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
+				data = OHLCV(code=code, date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
 				data.save()
 
 		else:
@@ -125,18 +130,20 @@ for t in range(index, len(ticker)):
 				low_price = int(df[0].ix[i][5].replace(",", ""))
 				close_price = int(df[0].ix[i][1].replace(",", ""))
 				volume = int(df[0].ix[i][6].replace(",", ""))
+				code = Ticker.objects.filter(id=ticker['id'][t]).first()
 				#db에 저장
-				data = OHLCV(code=ticker['id'][t], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
+				data = OHLCV(code=code, date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
 				data.save()
 		if(date_1999):
 			break
+
 
 
 	end_time = time.time()
 
 	av_time = (av_time+(end_time-start_time))/2.0
 
-	print(str(i)+" comany took..", end_time-start_time)
+	print(str(t)+" comany took..", end_time-start_time)
 	print("average = ", av_time)
 
 f.close()
