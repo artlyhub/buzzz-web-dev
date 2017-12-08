@@ -1,7 +1,69 @@
 {% load static %}
 <html>
-	<head></head>
+	<head>
+		{% include "base_assets.html" %}
+		<script src="{% static 'highcharts/code/highcharts.js' %}" charset="utf-8"></script>
+	</head>
 	<body>
-		<script src="{% static 'prod/index.js' %}" charset="utf-8"></script>
+		<div id="container" style="height: 400px; width: 500px"></div>
+		<script type="text/javascript">
+		(function($) {
+			var chart = new Highcharts.Chart({
+
+					title: {
+					    text: '',
+					    style: {
+					        display: 'none'
+					    }
+					},
+
+					subtitle: {
+					    text: '',
+					    style: {
+					        display: 'none'
+					    }
+					},
+
+					chart: {
+							renderTo: 'container',
+							type: 'pie',
+							backgroundColor: '#FCFFC5',
+					},
+
+					credits: {
+							enabled: false
+					},
+
+					plotOptions: {
+							pie: {
+									borderColor: '#FCFFC5',
+									innerSize: '60%'
+							}
+					},
+
+					series: [{
+							data: [
+									{['Firefox', 44.2], name: '비중'},
+									['IE7', 26.6],
+									['IE6', 20],
+									['Chrome', 3.1],
+									['Other', 5.4]
+									]}]
+				},
+				// using
+
+				function(chart) { // on complete
+						var xpos = '50%';
+						var ypos = '53%';
+						var circleradius = 102;
+
+				// Render the circle
+				chart.renderer.circle(xpos, ypos, circleradius).attr({
+						fill: '#FCFFC5',
+				}).add();
+
+			});
+		})(jQuery)
+		</script>
 	</body>
 </html>

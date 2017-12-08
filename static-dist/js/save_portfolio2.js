@@ -1,38 +1,38 @@
 ( function($) {
 
-    function formatNumber(num) {
-      // return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-      return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-    }
+    // function formatNumber(num) {
+    //   // return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    //   return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    // }
 
     // 1st page: set capital amount to 10000000 if not given
-    $(document).on('click', '#save_capital_btn', function () {
+    function set_capital() {
       var capital_amt = $('#capital_set').val()
       if (!capital_amt | 0 === capital_amt.length) {
+        $('#msg-area').text('')
         $('#capital_amt').text('10,000,000원')
         $('#slider_next').click()
       } else {
-        if (typeof parseInt(capital_amt) === 'number') {
-          var formatted_capital = formatNumber(capital_amt)
+        if (isNaN(Number(capital_amt))) {
+          var msg = '자본금을 다시 한 번 입력해주세요'
+          $('#msg-area').text(msg)
+          $('#capital_set').val('')
+        } else {
+          $('#msg-area').text('')
+          var formatted_capital = parseInt(capital_amt).toLocaleString()
           $('#capital_amt').text(formatted_capital + '원')
           $('#slider_next').click()
         }
       }
+    }
+
+    $(document).on('click', '#save_capital_btn', function () {
+      set_capital()
     })
 
     $(document).on('keydown', '#capital_set', function (e) {
       if (e.keyCode == 13) {
-        var capital_amt = $('#capital_set').val()
-        if (!capital_amt | 0 === capital_amt.length) {
-          $('#capital_amt').text('0')
-          $('#slider_next').click()
-        } else {
-          if (typeof parseInt(capital_amt) === 'number') {
-            var formatted_capital = formatNumber(capital_amt)
-            $('#capital_amt').text(formatted_capital + '원')
-            $('#slider_next').click()
-          }
-        }
+        set_capital()
       }
     })
 
@@ -82,9 +82,13 @@
         method: "GET",
         url: '/api/ticker/?date=' + date + '&code=' + ticker,
         success: function(data){
-          var name = data.results[0].name
-          var ticker = data.results[0].code
-          add_code_list(name, ticker)
+          if (data.results.length > 0) {
+            var name = data.results[0].name
+            var ticker = data.results[0].code
+            add_code_list(name, ticker)
+          } else {
+            // pass
+          }
         },
         error: function(data){
           console.log('error')
@@ -95,7 +99,8 @@
 
     function add_code_list(name, ticker) {
       if ($.inArray(ticker, codes_list) != -1) {
-        // pass
+        var msg2 = '이미 담으신 종목입니다'
+        $('#msg-area-2').text(msg2)
       } else {
         var code_list = `
         <div class="list_col">
@@ -105,6 +110,7 @@
         `.format(name, ticker)
         $('.search_list').append(code_list)
         codes_list.push(ticker)
+        $('#msg-area-2').text('')
       }
     }
 
@@ -143,27 +149,172 @@
     })
 
     // last step: save portfolio data to server
-    function save_portfolio_data() {
+
+    // function getCookie(name) {
+    //   var cookieValue = null
+    //   if (document.cookie && document.cookie !== '') {
+    //       var cookies = document.cookie.split(';')
+    //       for (var i = 0; i < cookies.length; i++) {
+    //           var cookie = jQuery.trim(cookies[i])
+    //           // Does this cookie string begin with the name we want?
+    //           if (cookie.substring(0, name.length + 1) === (name + '=')) {
+    //               cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+    //               break;
+    //           }
+    //       }
+    //   }
+    //   return cookieValue;
+    // }
+
+    function save_portfolio_data(name, capital, type_raw, start_clicked) {
+      // var csrftoken = getCookie('csrftoken')
+
+      var type
+      if (type_raw == '주식형') {
+        type = 'S'
+      } else if (type_raw == '현금 + 주식형') {
+        type = 'CS'
+      }
+      $.ajax({
+        method: "POST",
+        url: '/api/portfolio/',
+        data: {
+            'name': name,
+            'capital': capital,
+            'portfolio_type': type,
+            // 'csrfmiddlewaretoken': csrftoken
+        },
+        success: function(data){
+          $('#saved_port_id').attr('value', data.id)
+          if (start_clicked == true) {
+            if (codes_list.length == 0) {
+              var msg2 = '관심있는 종목을 선택하여 주세요'
+              $('#msg-area-2').text(msg2)
+            } else {
+              save_history()
+            }
+          }
+        },
+        error: function(data){
+          console.log('error')
+          console.log(data)
+        }
+      })
+    }
+
+    function update_portfolio_data(portfolio_id, name, capital, type_raw, start_clicked) {
+      var type
+      if (type_raw == '주식형') {
+        type = 'S'
+      } else if (type_raw == '현금 + 주식형') {
+        type = 'CS'
+      }
+      $.ajax({
+        type: "PUT",
+        dataType: "json",
+        url: '/api/portfolio/' + String(portfolio_id) + '/',
+        data: {
+            'id': parseInt(portfolio_id),
+            'name': name,
+            'capital': capital,
+            'portfolio_type': type,
+        },
+        success: function(data){
+          console.log(data)
+          if (start_clicked == true) {
+            if (codes_list.length == 0) {
+              var msg2 = '관심있는 종목을 선택하여 주세요'
+              $('#msg-area-2').text(msg2)
+            } else {
+              save_history()
+            }
+          }
+        },
+        error: function(data){
+          console.log('error')
+          console.log(data)
+        }
+      })
+    }
+
+    function save_code_list(portfolio_id, code) {
+      var status = 'B'
+      $.ajax({
+        method: "POST",
+        url: '/api/history/',
+        data: {
+            'portfolio': portfolio_id,
+            'date': '',
+            'code': code,
+            'status': status,
+            'price': 0
+            // 'csrfmiddlewaretoken': csrftoken
+        },
+        success: function(data){
+          console.log(data)
+        },
+        error: function(data){
+          console.log('error')
+          console.log(data)
+        }
+      })
+    }
+
+    function save_history() {
+      if ($('#saved_port_id').attr('value') != '') {
+        for (var i = 0; i < codes_list.length; i++) {
+          save_code_list($('#saved_port_id').attr('value'), codes_list[i])
+        }
+      }
+    }
+
+    function save_portfolio_on_click(start_clicked) {
+      var name = $('#save_name').val()
       var capital = parseInt($('#capital_amt').text().replace(/,/g , '').replace('원', ''))
-      console.log(capital)
-      // $.ajax({
-      //   method: "POST",
-      //   url: '/api/portfolio/',
-      //   data: {
-      //       'capital': capital,
-      //   },
-      //   success: function(data){
-      //     $('#capital_amt').text(String(data.capital) + '원')
-      //   },
-      //   error: function(data){
-      //     console.log('error')
-      //     console.log(data)
-      //   }
-      // })
+      var type_raw = $('#kinds_type').text()
+
+      if (name == '') {
+        var d = new Date()
+        var year = d.getFullYear()
+        var month = d.getMonth().pad(2)
+        var date = d.getDate().pad(2)
+        var hours = d.getHours().pad(2)
+        var mins = d.getMinutes().pad(2)
+        name = year + month + date + hours + mins
+      }
+
+      if (!isNaN(capital) && type_raw != '') {
+        if ($('#saved_port_id').attr('value') != '') {
+          update_portfolio_data($('#saved_port_id').attr('value'), name, capital, type_raw, start_clicked)
+          $('#save_submit_pop').removeClass('active')
+        } else {
+          save_portfolio_data(name, capital, type_raw, start_clicked)
+          $('#save_submit_pop').removeClass('active')
+        }
+      }
+
+      else if (!isNaN(capital) && type_raw == '') {
+        if ($('#saved_port_id').attr('value') != '') {
+          update_portfolio_data($('#saved_port_id').attr('value'), name, capital, '현금 + 주식형', start_clicked)
+          $('#save_submit_pop').removeClass('active')
+        } else {
+          save_portfolio_data(name, capital, '현금 + 주식형', start_clicked)
+          $('#save_submit_pop').removeClass('active')
+        }
+      }
+
+      else {
+        $('#save_submit_pop').removeClass('active')
+      }
+
     }
 
     $(document).on('click', '.slider_btn2', function () {
-      save_portfolio_data()
+      save_portfolio_on_click(true)
+    })
+
+    $(document).on('click', '#save_name_btn', function () {
+      save_portfolio_on_click()
     })
 
 })(jQuery);
