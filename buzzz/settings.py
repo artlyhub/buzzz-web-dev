@@ -148,12 +148,12 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-if not DEBUG:
-    REST_FRAMEWORK = {
-        'DEFAULT_RENDERER_CLASSES': (
-            'rest_framework.renderers.JSONRenderer',
-        )
-    }
+# if not DEBUG:
+#     REST_FRAMEWORK = {
+#         'DEFAULT_RENDERER_CLASSES': (
+#             'rest_framework.renderers.JSONRenderer',
+#         )
+#     }
 
 if not DEBUG:
     CELERY_BROKER_URL = 'redis://localhost:6379'
