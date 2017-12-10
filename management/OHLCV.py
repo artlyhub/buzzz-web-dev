@@ -50,7 +50,7 @@ ticker = df
 # #중단된 지점 확인
 # if (os.path.isfile("OHLCV_log.txt")):
 # 	f = open("OHLCV_log.txt", 'r')
-# 	#마지막 줄 회사 code만 읽어오기 
+# 	#마지막 줄 회사 code만 읽어오기
 # 	for line in f:
 # 		pass
 # 	last_company = line
@@ -58,8 +58,8 @@ ticker = df
 
 # 	while not(ticker['code'][index]+"\n" == last_company):
 # 		index += 1
-# 	#중단된 회사 ohlcv 삭제 
-# 	OHLCV.objects.filter(code=ticker['code'][index]).delete() 
+# 	#중단된 회사 ohlcv 삭제
+# 	OHLCV.objects.filter(code=ticker['code'][index]).delete()
 
 
 
@@ -68,10 +68,10 @@ index = 775
 
 
 
-#log파일 열기 
+#log파일 열기
 f = open("OHLCV_log.txt", 'w')
 
-#OHLCV 
+#OHLCV
 for t in range(index, len(ticker)):
 	start_time = time.time()
 	#log 기록(회사 code)
@@ -83,14 +83,14 @@ for t in range(index, len(ticker)):
 	r = requests.get(url, headers = user_agent, auth=('user', 'pass'))
 	d = r.text
 	soup = BeautifulSoup(d, "html.parser")
-	#page 수 찾기 
+	#page 수 찾기
 	for end in soup.find_all('a', href=True):
 		pass
 	page = re.findall('\d+', end['href'][-4:])[0]
 
 
 	for p in range(1, int(page)+1):
-		url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker['code'][t] + "&page=" + str(p) 
+		url = "http://finance.naver.com/item/sise_day.nhn?code="+ticker['code'][t] + "&page=" + str(p)
 		df = pd.read_html(url, thousands='')
 
 		#1999년인지 확인
@@ -144,18 +144,3 @@ for t in range(index, len(ticker)):
 	print("average = ", av_time)
 
 f.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

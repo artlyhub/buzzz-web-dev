@@ -1,30 +1,25 @@
 (function($) {
   var chart = new Highcharts.Chart({
-
       title: {
           text: '',
           style: {
               display: 'none'
           }
       },
-
       subtitle: {
           text: '',
           style: {
               display: 'none'
           }
       },
-
       chart: {
           renderTo: 'container',
           type: 'pie',
           backgroundColor: '#27314f',
       },
-
       credits: {
           enabled: false
       },
-
       plotOptions: {
           pie: {
               allowPointSelect: true,
@@ -39,7 +34,6 @@
               }
           }
       },
-
       series: [{
           name: '비중',
           data: [
@@ -51,16 +45,13 @@
               ]}]
     },
     // using
-
     function(chart) { // on complete
         var xpos = '50%';
         var ypos = '53%';
         var circleradius = 102;
-
     // Render the circle
     chart.renderer.circle(xpos, ypos, circleradius).attr({
         fill: '#27314f',
     }).add();
-
   });
 })(jQuery)

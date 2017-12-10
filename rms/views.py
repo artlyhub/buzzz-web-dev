@@ -28,12 +28,18 @@ class RMSDiagnosisView(View):
     def get(self, request, pk):
         if not request.user.is_authenticated:
             return redirect('/')
-        portfolio = get_object_or_404(Portfolio, pk=pk)
-        if portfolio.user == request.user:
-            context = {'status': '진단'}
-        else:
-            context = {
-                'status': '진단',
-                'portfolio': portfolio
-            }
+        portfolio = Portfolio.objects.filter(pk=pk)
+        if portfolio.exists():
+            if portfolio.first().user == request.user:
+                context = {'status': '진단'}
+            else:
+                history = portfolio.first().history.all()
+                hist_dict = dict()
+                for hist in history:
+                    hist_dict[hist.code.code] = OHLCV.objects.filter(code=hist.code).distinct('date').values_list('date', 'close_price')
+                context = {
+                    'status': '진단',
+                    'portfolio': portfolio.first(),
+                    'history': hist_dict
+                }
         return render(self.request, 'rms_opt.html', context)

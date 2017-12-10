@@ -3,3 +3,5 @@ db.sqlite3
 algo_test
 node_modules
 sensitives.pickle
+OHLCV_KD_log.txt
+management/kiwoomapi
