@@ -1,4 +1,6 @@
-import sys, pickle
+import os, sys, pickle
+
+os.chdir('../')
 
 pickle_file = open('sensitives.pickle', 'rb')
 data = pickle.load(pickle_file)
