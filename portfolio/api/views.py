@@ -7,6 +7,7 @@ from rest_framework.response import Response
 # from django.views.decorators.csrf import csrf_exempt
 
 from portfolio.api.serializers import (
+    PortfolioDiagnosisSerializer,
     PortfolioSerializer,
     PortfolioHistorySerializer,
 )
@@ -62,6 +63,11 @@ class PortfolioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+
+
+class PortfolioDiagnosisAPIView(generics.RetrieveAPIView):
+    queryset = Portfolio
+    serializer_class = PortfolioDiagnosisSerializer
 
 
 class PortfolioHistoryAPIView(generics.ListCreateAPIView):
