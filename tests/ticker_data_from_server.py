@@ -1,7 +1,7 @@
 import os, requests
 import pandas as pd
 
-buzzz_url = 'http://45.32.63.193/api/ticker/'
+buzzz_url = 'https://buzzz.co.kr/api/ticker/'
 dest_path = os.getcwd() + '\\tests'
 
 def get_buzzz_data(buzzz_url):
