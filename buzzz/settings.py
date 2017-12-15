@@ -127,13 +127,13 @@ if DEBUG == False:
         )
     }
 
-# if DEBUG == False:
-#     CELERY_BROKER_URL = 'redis://localhost:6379'
-#     CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-# else:
-#     CELERY_BROKER_URL = 'amqp://localhost'
-#     CELERY_RESULT_BACKEND = 'amqp://localhost'
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TIMEZONE = TIME_ZONE
+if DEBUG == False:
+    CELERY_BROKER_URL = 'redis://localhost:6379'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+else:
+    CELERY_BROKER_URL = 'amqp://localhost'
+    CELERY_RESULT_BACKEND = 'amqp://localhost'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
