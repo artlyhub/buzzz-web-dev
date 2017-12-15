@@ -23,7 +23,7 @@ class KOSPI(models.Model):
                               choices=SIGNAL,
                               blank=True,
                               null=True)
-    signal_days = models.IntegerField()
+    signal_days = models.IntegerField(blank=True, null=True)
     rating = models.CharField(max_length=1,
                               choices=RATING,
                               blank=True,
@@ -40,7 +40,7 @@ class KOSDAQ(models.Model):
                               choices=SIGNAL,
                               blank=True,
                               null=True)
-    signal_days = models.IntegerField()
+    signal_days = models.IntegerField(blank=True, null=True)
     rating = models.CharField(max_length=1,
                               choices=RATING,
                               blank=True,

@@ -4,9 +4,7 @@ from restapi.models import Ticker
 
 
 class WeekSpecs(models.Model):
-    code = models.ForeignKey(Ticker,
-                             on_delete=models.CASCADE,
-                             related_name='week_specs')
+    code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
     momentum = models.FloatField(blank=True, null=True)
     mom_rank = models.IntegerField(blank=True, null=True)
@@ -20,9 +18,7 @@ class WeekSpecs(models.Model):
 
 
 class TwoWeekSpecs(models.Model):
-    code = models.ForeignKey(Ticker,
-                             on_delete=models.CASCADE,
-                             related_name='two_week_specs')
+    code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
     momentum = models.FloatField(blank=True, null=True)
     mom_rank = models.IntegerField(blank=True, null=True)
@@ -36,9 +32,7 @@ class TwoWeekSpecs(models.Model):
 
 
 class MonthSpecs(models.Model):
-    code = models.ForeignKey(Ticker,
-                             on_delete=models.CASCADE,
-                             related_name='month_specs')
+    code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
     momentum = models.FloatField(blank=True, null=True)
     mom_rank = models.IntegerField(blank=True, null=True)
@@ -52,9 +46,7 @@ class MonthSpecs(models.Model):
 
 
 class QuarterSpecs(models.Model):
-    code = models.ForeignKey(Ticker,
-                             on_delete=models.CASCADE,
-                             related_name='quarter_specs')
+    code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
     momentum = models.FloatField(blank=True, null=True)
     mom_rank = models.IntegerField(blank=True, null=True)
@@ -68,9 +60,7 @@ class QuarterSpecs(models.Model):
 
 
 class HalfYearSpecs(models.Model):
-    code = models.ForeignKey(Ticker,
-                             on_delete=models.CASCADE,
-                             related_name='half_year_specs')
+    code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
     momentum = models.FloatField(blank=True, null=True)
     mom_rank = models.IntegerField(blank=True, null=True)
@@ -84,9 +74,7 @@ class HalfYearSpecs(models.Model):
 
 
 class YearSpecs(models.Model):
-    code = models.ForeignKey(Ticker,
-                             on_delete=models.CASCADE,
-                             related_name='year_specs')
+    code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
     momentum = models.FloatField(blank=True, null=True)
     mom_rank = models.IntegerField(blank=True, null=True)
