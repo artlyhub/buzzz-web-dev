@@ -25,7 +25,7 @@ if sys.argv[1] == 'ip':
         pickle.dump(data, f)
     print('Update complete')
 elif sys.argv[1] == 'debug':
-    data['DEBUG'] = sys.argv[2]
+    data['DEBUG'] = bool(sys.argv[2])
     with open('sensitives.pickle', 'wb') as f:
         pickle.dump(data, f)
     print('Update complete')
