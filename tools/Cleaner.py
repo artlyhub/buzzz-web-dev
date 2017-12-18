@@ -15,7 +15,7 @@ class Cleaner(object):
 
     def clean_migrations(self):
         for app in self.apps:
-            os.chdir(self.start_path + '\\' + app + '\\migrations\\')
+            os.chdir(self.start_path + '/' + app + '/migrations/')
             print(os.getcwd())
             mig_f = glob.glob('0*')
             for f in mig_f:

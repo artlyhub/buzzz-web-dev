@@ -19,7 +19,7 @@ class Sensitives(object):
         self.data = None
 
     def setup(self):
-        pickle_file = self.start_path + '\\sensitives.pickle'
+        pickle_file = self.start_path + '/sensitives.pickle'
         if os.path.exists(pickle_file):
             print('Sensitives.pickle file already exists, edit each values through "set"')
         else:
@@ -33,7 +33,7 @@ class Sensitives(object):
             self.save(True)
 
     def open(self):
-        pickle_file = open(self.start_path + '\\sensitives.pickle', 'rb')
+        pickle_file = open(self.start_path + '/sensitives.pickle', 'rb')
         self.data = pickle.load(pickle_file)
         print('Data loaded')
 
@@ -55,7 +55,7 @@ class Sensitives(object):
         print('Successfully set ' + key + ' as ' + str(val))
 
     def save(self, initial=False):
-        pickle_file = open(self.start_path + '\\sensitives.pickle', 'wb')
+        pickle_file = open(self.start_path + '/sensitives.pickle', 'wb')
         if initial:
             pickle.dump(self.sensitives, pickle_file)
         else:

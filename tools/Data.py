@@ -14,12 +14,12 @@ from restapi.models import Ticker, OHLCV
 class Data(object):
     def __init__(self, start_path):
         self.START_PATH = start_path
-        self.TICKER_PATH = start_path + '\\data'
-        self.BM_PATH = start_path + '\\data\\bm'
-        self.OHLCV_PATH = start_path + '\\management\\kiwoomapi\\ohlcv'
+        self.TICKER_PATH = start_path + '/data'
+        self.BM_PATH = start_path + '/data/bm'
+        self.OHLCV_PATH = start_path + '/management/kiwoomapi/ohlcv'
 
     def _exists(self, directory, filename):
-        full_path = directory + '\\{}'.format(filename)
+        full_path = directory + '/{}'.format(filename)
         return os.path.exists(full_path), full_path
 
     def _retrieve_data(self, directory, filename):

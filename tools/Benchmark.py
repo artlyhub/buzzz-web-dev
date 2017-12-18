@@ -10,7 +10,7 @@ import os, datetime
 
 class Benchmark(object):
     def __init__(self, start_path):
-        self.DEST = start_path + '\\data\\bm'
+        self.DEST = start_path + '/data/bm'
 
     def _init(self, year=1990, month=1, day=1):
         start = datetime.datetime(year, month, day)
@@ -19,7 +19,7 @@ class Benchmark(object):
         self.df = df_null.dropna()
 
     def get(self):
-        f = self.DEST + '\\BM.csv'
+        f = self.DEST + '/BM.csv'
         if os.path.exists(f):
             exists = True
             self.df = pd.read_csv(f)
@@ -34,4 +34,4 @@ class Benchmark(object):
             return self.df, exists
 
     def _save(self):
-        self.df.to_csv(self.DEST + '\\BM.csv')
+        self.df.to_csv(self.DEST + '/BM.csv')
