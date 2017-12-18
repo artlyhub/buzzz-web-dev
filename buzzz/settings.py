@@ -14,10 +14,7 @@ DB_PW = sensitives['DB_PW']
 DEBUG = sensitives['DEBUG']
 # APP_STATUS = sensitives['APP_STATUS']
 
-ALLOWED_HOSTS = [IP_ADDRESS, '127.0.0.1', '127.0.1.1']
-
-if DEBUG == False:
-    ALLOWED_HOSTS += ['buzzz.co.kr', 'www.buzzz.co.kr']
+ALLOWED_HOSTS = ['buzzz.co.kr', 'www.buzzz.co.kr', IP_ADDRESS, '127.0.0.1', '127.0.1.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -70,24 +67,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'buzzz.wsgi.application'
 
-if DEBUG == False:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': DB_NAME,
-            'USER': DB_USER,
-            'PASSWORD': DB_PW,
-            'HOST': IP_ADDRESS,
-            'PORT': '',
-        }
+# if DEBUG == False:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': DB_NAME,
+#             'USER': DB_USER,
+#             'PASSWORD': DB_PW,
+#             'HOST': IP_ADDRESS,
+#             'PORT': '',
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         }
+#     }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PW,
+        'HOST': IP_ADDRESS,
+        'PORT': '',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -120,19 +128,21 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-if DEBUG == False:
-    REST_FRAMEWORK = {
-        'DEFAULT_RENDERER_CLASSES': (
-            'rest_framework.renderers.JSONRenderer',
-        )
-    }
+# if DEBUG == False:
+#     REST_FRAMEWORK = {
+#         'DEFAULT_RENDERER_CLASSES': (
+#             'rest_framework.renderers.JSONRenderer',
+#         )
+#     }
 
-if DEBUG == False:
-    CELERY_BROKER_URL = 'redis://localhost:6379'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-else:
-    CELERY_BROKER_URL = 'amqp://localhost'
-    CELERY_RESULT_BACKEND = 'amqp://localhost'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# if DEBUG == False:
+#     CELERY_BROKER_URL = 'redis://localhost:6379'
+#     CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# else:
+#     CELERY_BROKER_URL = 'amqp://localhost'
+#     CELERY_RESULT_BACKEND = 'amqp://localhost'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
