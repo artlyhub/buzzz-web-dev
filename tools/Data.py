@@ -70,7 +70,7 @@ class Data(object):
                 code = ohlcv_file.split('.')[0]
                 date, open_price, high_price, low_price, close_price, volume = list(df.ix[row_n])
                 ohlcv_inst = OHLCV(code=code,
-                                   date=str(date).strip(),
+                                   date=str(date)[:8],
                                    open_price=open_price,
                                    high_price=high_price,
                                    low_price=low_price,

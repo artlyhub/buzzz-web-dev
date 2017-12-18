@@ -70,7 +70,7 @@ class Info(models.Model):
 
 class OHLCV(models.Model):
     code = models.CharField(max_length=6)
-    date = models.CharField(max_length=20)
+    date = models.CharField(max_length=8)
     open_price = models.FloatField()
     high_price = models.FloatField()
     low_price = models.FloatField()
