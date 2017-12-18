@@ -6,3 +6,5 @@ sensitives.pickle
 OHLCV_KD_log.txt
 management/kiwoomapi
 data/ohlcv
+geckodriver.log
+phantomjs.log

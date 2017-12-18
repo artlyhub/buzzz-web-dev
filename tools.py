@@ -19,6 +19,7 @@ from tools.Benchmark import Benchmark
 from tools.Cleaner import Cleaner
 from tools.Data import Data
 from tools.Sensitives import Sensitives
+import tools.KRX as KRX
 
 if sys.argv[1] == 'cleanmigrations':
     c = Cleaner(start_path)
@@ -54,3 +55,6 @@ elif sys.argv[1] == 'data':
             d.send_ticker()
         elif sys.argv[3] == 'ohlcv':
             d.send_ohlcv()
+
+elif sys.argv[1] == 'krx':
+    KRX.main(start_path)

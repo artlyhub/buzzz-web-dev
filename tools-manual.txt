@@ -27,3 +27,8 @@ python tools.py bm
 
 python tools.py data send ticker
 python tools.py data send ohlcv
+
+
+5. KRX: get ticker data from local computer
+
+python tools.py krx
