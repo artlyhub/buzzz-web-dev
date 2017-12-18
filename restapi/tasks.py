@@ -22,25 +22,25 @@ def get_ohlcv():
 	for i in range(len(ticker)):
 		if not(OHLCV.objects.filter(code=ticker[i].code).filter(date=date).exists()):
 			#OHLCV
-			url = "http://finance.naver.com/item/sise_day.nhn?code="+str(ticker[i].code) 
+			url = "http://finance.naver.com/item/sise_day.nhn?code="+str(ticker[i].code)
 			df = pd.read_html(url, thousands='')
-			
+
 			open_price = int(df[0].ix[1][3].replace(",", ""))
 			high_price = int(df[0].ix[1][4].replace(",", ""))
 			low_price = int(df[0].ix[1][5].replace(",", ""))
 			close_price = int(df[0].ix[1][1].replace(",", ""))
 			volume = int(df[0].ix[1][6].replace(",", ""))
 
-			data = OHLCV(code=ticker[i], date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
+			data = OHLCV(code=ticker[i].code, date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
 			data.save()
 
 
 @task(name="scrape_naver_info")
 def getInfo():
-	#오늘의 날짜 
+	#오늘의 날짜
 	today_date = datetime.now().strftime("%Y%m%d")
 
-	#모델 가져오기 
+	#모델 가져오기
 	ticker = Ticker.objects.filter(date=today_date)
 	ohlcv = OHLCV.objects.filter(date=today_date)
 
@@ -87,8 +87,8 @@ def getInfo():
 	        yield_ret = float(yield_ret.string.replace(",", ""))
 
 
-	    #db에 저장 
-	    data = Info(code=ticker[i], date=today_date, size_type=size_type, style_type=style_type, 
+	    #db에 저장
+	    data = Info(code=ticker[i].code, date=today_date, size_type=size_type, style_type=style_type,
 	                face_val=face_val, stock_nums=stock_nums, market_cap=market_cap, market_cap_rank=market_cap_rank,
 	                industry=industry, per=per, pbr=pbr, yield_ret=yield_ret)
 	    data.save()
@@ -99,10 +99,10 @@ def getInfo():
 	#industy
 	index=0
 	info_list = Info.objects.filter(date=today_date)
-	#코스피 industry 저장 
+	#코스피 industry 저장
 	f = open("data\\20171206_kospi_industry.txt", 'r')
 	for industry in f:
-	    info_list[index].industry = industry[:-1] #\n 제거 
+	    info_list[index].industry = industry[:-1] #\n 제거
 	    info_list[index].save()
 	    index += 1
 	f.close()
@@ -112,34 +112,34 @@ def getInfo():
 	#코스닥 industry 저장
 	f = open("data\\20171206_kosdaq_industry.txt", 'r')
 	for industry in f:
-	    info_list[index].industry = industry[:-1] #\n 제거 
+	    info_list[index].industry = industry[:-1] #\n 제거
 	    info_list[index].save()
 	    index += 1
 	f.close()
 
 
 
-	#시가총액 순위, 사이즈 
+	#시가총액 순위, 사이즈
 	orderd_info_list = Info.objects.order_by('-market_cap')
 	for i in range(len(orderd_info_list)):
 	    #시가 총액 순위 매기기
 	    orderd_info = orderd_info_list[i]
 	    orderd_info.market_cap_rank = (i+1)
-	    
+
 	    if(i<kosdaq_start_index):
-	        #코스피 사이즈 매기기 
+	        #코스피 사이즈 매기기
 	        if(i<100):
 	            orderd_info.size_type = 'L'
 	        elif(i<300):
 	            orderd_info.size_type = 'M'
-	    else:        
-	        #코스닥 사이즈 매기기 
+	    else:
+	        #코스닥 사이즈 매기기
 	        if (i-kosdaq_start_index <100):
 	            orderd_info.size_type = 'L'
 	        elif (i-kosdaq_start_index<400):
 	            orderd_info.size_type = 'M'
 
-	    #db에 반영 
+	    #db에 반영
 	    orderd_info.save()
 
 
@@ -151,15 +151,3 @@ def getInfo():
 	for i in range(len(Info.objects.filter(date=today_date))):
 	  orderd_info = Info.objects.order_by('code')[i]
 	  orderd_info.save()
-
-
-
-
-
-
-
-
-
-
-
-
