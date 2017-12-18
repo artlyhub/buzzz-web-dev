@@ -22,6 +22,7 @@ document.createElement("time"   );
         <!--END 모든페이지 공통-->
         <!--서브 페이지-->
         <link rel="stylesheet" href="{% static 'css/sub-page.css' %}" type="text/css" media="all">
+        <script type="text/javascript" src="{% static 'js/sub_page.js' %}"></script>
         <!--END 서브 페이지-->
     </head>
 
@@ -48,8 +49,8 @@ data-page에 메인페이지 인지 서브페이지 인지 구분해주세요~!
                         {% if user.is_authenticated %}
                         <div class="header_right_info">
                           <div class="myinfo_wrap">
-                              <a href="" class="notice_btn">notice</a>
-                              <span>|</span>
+                              <!-- <a href="" class="notice_btn">notice</a>
+                              <span>|</span> -->
                               <!--header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
                               <span class="header_myname">{{ user.username }}({{ user.email }})</span>
                               <!--END header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
@@ -111,19 +112,17 @@ data-page에 메인페이지 인지 서브페이지 인지 구분해주세요~!
 현재 페이지에 메세지가 있다면
 message_on을 클래스명에 넣어주세요
 -->
-                <a class="identity_icon_btn">
-                    <figure class="circle_icon"></figure>
+                <a class="identity_icon_btn message_on">
                     <figure class="bee_icon"></figure>
                 </a>
                 <!-- END 메세지 알림 -->
                 <!-- 메세지 팝업 알림( 페이지별 메세지 여기에 작성해주시면 됩니다. ) -->
                 <div class="identity_popup">
                     <div class="identity_title">
-                        마켓시그널 (MARKET SIGNAL)
+                        리스크 관리툴 (RMS)
                     </div>
                     <div class="identity_description">
-                        <p>시장의 큰 흐름을 읽습니다. 시장을 움직이는 주요 거시 지표들을 분석하여 미래 시장의 방향성을 알아봅니다.</p>
-                        <p>시장의 큰 흐름을 읽습니다. 시장을 움직이는 주요 거시 지표들을 분석하여 미래 시장의 방향성을 알아봅니다.</p>
+                        <p>주식형 혹은 주식 + 현금의 혼합형 포트폴리오를 최적화하여 가장 안전하면서도 수익률 좋은 투자를 하세요.</p>
                     </div>
                 </div>
                 <!-- END 메세지 팝업 알림 -->
