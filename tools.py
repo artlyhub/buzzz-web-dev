@@ -23,7 +23,7 @@ from tools.Sensitives import Sensitives
 if sys.argv[1] == 'cleanmigrations':
     c = Cleaner(start_path)
     c.clean_migrations()
-    db = start_path + '\\db.sqlite3'
+    db = start_path + '/db.sqlite3'
     if os.path.exists(db):
         os.remove(db)
         print('Removed database')
@@ -49,7 +49,7 @@ elif sys.argv[1] == 'bm':
 
 elif sys.argv[1] == 'data':
     d = Data(start_path)
-    if sys.argv[2] == 'get':
+    if sys.argv[2] == 'send':
         if sys.argv[3] == 'ticker':
             d.send_ticker()
         elif sys.argv[3] == 'ohlcv':

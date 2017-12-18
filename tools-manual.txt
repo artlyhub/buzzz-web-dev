@@ -1,0 +1,29 @@
+## @Ver     0.8v
+## @Author  Phillip Park
+## @Date    2017/12/18
+## @Details tools.py 설명서
+
+## Main commands ##
+
+
+1. Cleaner: deletes all migrations files and db.sqlite3 if it exists
+
+python tools.py cleanmigrations
+
+
+2. Sensitives: manages sensitives.pickle file
+
+python tools.py sensitives check
+python tools.py sensitives setup
+python tools.py sensitives set <KEY_NAME> <VALUE>
+
+
+3. BM: manages BM file and BM data in database
+
+python tools.py bm
+
+
+4. Data: can retrieve data from server and send data to server from local csv files
+
+python tools.py data send ticker
+python tools.py data send ohlcv
