@@ -34,7 +34,7 @@ INSTALLED_APPS = [
 
     'accounts',
     'arbiter',
-    'marketsignal',
+    # 'marketsignal',
     'portfolio',
     'restapi',
     'rms',

@@ -38,6 +38,7 @@ app.conf.beat_schedule = {
 #        'schedule': 5.0,
 #        'args': (random.randint(1, 100), random.randint(1, 100)),
 #    },
+
     'bithumb_get_orderbook_every_minute': {
         'task': 'bithumb_get_base_orderbook',
         'schedule': crontab(),
@@ -49,6 +50,7 @@ app.conf.beat_schedule = {
     	'schedule': crontab(hour=16),
         'args': (),
     },
+    
     'scrape-naver-info-at-4:30': {
         'task': 'scrape_naver_info',
         'schedule': crontab(hour=16, minute=30),

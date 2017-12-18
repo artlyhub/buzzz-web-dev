@@ -5,12 +5,12 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import (
-                CreateView,
-                DetailView,
-                DeleteView,
-                ListView,
-                UpdateView
-                )
+    CreateView,
+    DetailView,
+    DeleteView,
+    ListView,
+    UpdateView
+)
 
 
 class IndexView(View):

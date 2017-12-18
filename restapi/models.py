@@ -65,20 +65,20 @@ class Info(models.Model):
     yield_ret = models.FloatField(blank=True, null=True) # 배당수익률
 
     def __str__(self):
-        return self.code.code
+        return self.code
 
 
 class OHLCV(models.Model):
     code = models.CharField(max_length=6)
     date = models.CharField(max_length=8)
-    open_price = models.IntegerField()
-    high_price = models.IntegerField()
-    low_price = models.IntegerField()
-    close_price = models.IntegerField()
+    open_price = models.FloatField()
+    high_price = models.FloatField()
+    low_price = models.FloatField()
+    close_price = models.FloatField()
     volume = models.IntegerField()
 
     def __str__(self):
-        return self.code.code
+        return self.code
 
 
 # class BuySell(models.Model):
@@ -103,4 +103,4 @@ class Financial(models.Model):
     dividend_per_share = models.IntegerField(blank=True, null=True) # 주당배당금
 
     def __str__(self):
-        return self.code.code
+        return self.code
