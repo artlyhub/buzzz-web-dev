@@ -56,8 +56,8 @@ elif sys.argv[1] == 'data':
         elif sys.argv[3] == 'ohlcv':
             d.send_ohlcv()
 
-elif sys.argv[1] == 'krx':
-    KRX.main(start_path)
+# elif sys.argv[1] == 'krx':
+#     KRX.main(start_path)
 
 elif sys.argv[1] == 'process':
     p = Processor()
