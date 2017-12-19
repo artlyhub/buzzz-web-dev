@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
@@ -36,5 +38,6 @@ class RMSDiagnosisView(View):
                 context = {
                     'status': '진단',
                     'portfolio': portfolio.first(),
+                    'date': datetime.now()
                 }
         return render(self.request, 'rms_opt.html', context)

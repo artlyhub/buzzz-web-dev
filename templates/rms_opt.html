@@ -201,9 +201,9 @@ message_on을 클래스명에 넣어주세요
                             </div>
                         </div>
                         <div class="col col_gutter col-et-4 info_col3 col">
-                            <div class="info_bg light_bg">
+                            <div id="port_info_area" class="info_bg light_bg">
                                 <div class="portfolio_name accent-color">포트폴리오 수익률</div>
-                                <div class="portfolio_increase plus_line">+<span class="counter_num">50.4</span>%</div>
+                                <div class="portfolio_increase">-</div>
                                 <div class="info_portfolio_table_wrap">
                                     <table id="rms_portfolio_table" class="rms_info_table">
                                         <thead>
@@ -215,9 +215,9 @@ message_on을 클래스명에 넣어주세요
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td class="plus_td">20%</td>
-                                                <td class="yellow_td">2%</td>
-                                                <td>1.0</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -229,14 +229,14 @@ message_on을 클래스명에 넣어주세요
                     <div id="portfolio_result3" class="result_wrap wrap_gutter_ratio et-col-wrap clear_col" style="margin-bottom: 75px;">
                         <div class="col col-et-12 result_col1 col_gutter">
                             <div class="result_bg light_bg">
-                                <div class="portfolio_name accent-color">최용준의 포트폴리오</div>
+                                <div class="portfolio_name accent-color">{{ user.username }}의 포트폴리오</div>
                                 <div class="result_graph_wrap">
                                     <div id="result_info2" class="result_info_wrap clear_col">
                                         <div class="col">Cumulative performance :</div>
                                         <div class="col col_gutter chart_green">Algorithim</div>
                                         <div class="col">|</div>
                                         <div class="col col_gutter chart_red2">Benchmark</div>
-                                        <div id="result_date3" class="col_right">Oct. 5 2013</div>
+                                        <div id="result_date3" class="col_right">{{ date|date:'M d, Y' }}</div>
                                     </div>
                                     <div id="result_graph2" class="result_graph">
                                         <!-- <img src="/etemmu/asset/img/ex_img/ex_portfolio_graph.png"> -->
@@ -247,7 +247,7 @@ message_on을 클래스명에 넣어주세요
                                         <thead>
                                             <tr>
                                                 <th></th>
-                                                <th>1주 (%)</th>
+                                                <!-- <th>1주 (%)</th> -->
                                                 <th>1개월(%)</th>
                                                 <th>3개월(%)</th>
                                                 <th>6개월(%)</th>
@@ -256,8 +256,8 @@ message_on을 클래스명에 넣어주세요
                                         </thead>
                                         <tbody>
                                             <tr class="yellow_tr">
-                                                <td>최용준 포트폴리오</td>
-                                                <td>0.58%</td>
+                                                <td>{{ user.username }} 포트폴리오</td>
+                                                <!-- <td>0.58%</td> -->
                                                 <td>4.0%</td>
                                                 <td>9.0%</td>
                                                 <td>15.2%</td>
@@ -265,7 +265,7 @@ message_on을 클래스명에 넣어주세요
                                             </tr>
                                             <tr>
                                                 <td>비교지수 : KOSPI</td>
-                                                <td>0.22%</td>
+                                                <!-- <td>0.22%</td> -->
                                                 <td>0.89%</td>
                                                 <td>2.0%</td>
                                                 <td>3.56%</td>
@@ -274,6 +274,7 @@ message_on을 클래스명에 넣어주세요
                                         </tbody>
                                     </table>
                                 </div>
+                                <div id="username" value="{{ user.username }}"></div>
                             </div>
                         </div>
                     </div>

@@ -115,10 +115,16 @@ class PortfolioAlgorithm:
         new_data = dict()
         for column in bt.columns:
             ret_data = list()
-            dates = bt.index.astype(np.int64)
+            # dates = bt.index.astype(np.int64)
+            dates = bt.index
             for i in range(len(bt)):
                 data = bt.ix[i]
                 date = dates[i]
                 ret_data.append([date, round(data[column], 4)])
             new_data[column] = ret_data
         return new_data
+
+
+class BlackLitterman:
+    def __init__(self):
+        pass

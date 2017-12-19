@@ -5,7 +5,7 @@ from rest_framework.serializers import ValidationError
 
 from portfolio.algorithms import PortfolioAlgorithm
 from portfolio.models import Portfolio, PortfolioHistory
-from restapi.models import Ticker, OHLCV
+from restapi.models import Ticker, OHLCV, Specs
 
 User = get_user_model()
 
@@ -38,6 +38,7 @@ class PortfolioHistorySerializer(serializers.ModelSerializer):
 class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
     stock_num = serializers.SerializerMethodField()
     port_info = serializers.SerializerMethodField()
+    port_specs = serializers.SerializerMethodField()
 
     class Meta:
         model = Portfolio
@@ -49,6 +50,7 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
                   'description',
                   'stock_num',
                   'port_info',
+                  'port_specs',
                   'created',
                   'updated',)
 
@@ -64,7 +66,6 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
         left_over_capital = 0
         ratio_dict = dict()
         ohlcv_inst_list = list()
-        print('hello')
         for stock in stocks:
             code = stock.code.code
             ohlcv = OHLCV.objects.filter(code=stock.code.code)
@@ -88,10 +89,12 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
                     ratio_dict[code]['invested'] = int(invested)
                     left_over_capital += capital_per_stock - invested
                     ratio_dict[code]['buy_num'] = int(stock_num)
+                else:
+                    ratio_dict[code]['invested'] = 0
+                    ratio_dict[code]['buy_num'] = 0
             else:
                 continue
         ratio_dict['cash'] = left_over_capital
-        print(ratio_dict)
         redistribute = left_over_capital > 0
         while redistribute:
             extra_buy = list(filter(lambda x: x.close_price < left_over_capital, ohlcv_inst_list))
@@ -113,7 +116,6 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
             ratio_dict['cash'] = reset_left_over
             ohlcv_inst_list = extra_buy
             left_over_capital = reset_left_over
-        print(ratio_dict)
         for key, val in ratio_dict.items():
             if key != 'cash':
                 stock_ratio = val['invested']/capital
@@ -123,9 +125,32 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
         pa = PortfolioAlgorithm(ratio_dict)
         r, v, sr, yield_r, bt = pa.portfolio_info()
         new_bt = pa.change_bt_format(bt)
-        port_info['return'] = round(yield_r, 4)
-        port_info['average_return'] = round(r, 4)
-        port_info['average_volatility'] = round(v, 4)
-        port_info['sharpe_ratio'] = round(sr, 4)
+        port_info['return'] = round(yield_r, 3)*100
+        port_info['average_return'] = round(r, 3)*100
+        port_info['average_volatility'] = round(v, 3)*100
+        port_info['sharpe_ratio'] = round(sr, 3)
         port_info['backtest_result'] = new_bt
         return port_info
+
+    def get_port_specs(self, obj):
+        stocks = obj.history.all()
+        stock_counts = stocks.count()
+        mom_s = 0
+        volt_s = 0
+        cor_s = 0
+        vol_s = 0
+        tot_s = 0
+        for stock in stocks:
+            code = stock.code.code
+            specs = Specs.objects.filter(code=stock.code.code).order_by('date').first()
+            mom_s += specs.momentum_score
+            volt_s += specs.volatility_score
+            cor_s += specs.correlation_score
+            vol_s += specs.volume_score
+            tot_s += (specs.momentum_score + specs.volatility_score + specs.correlation_score + specs.volume_score)/4
+        mom_s = mom_s//stock_counts
+        volt_s = volt_s//stock_counts
+        cor_s = cor_s//stock_counts
+        vol_s = vol_s//stock_counts
+        tot_s = int(tot_s//stock_counts)
+        return [tot_s, mom_s, volt_s, cor_s, vol_s]
