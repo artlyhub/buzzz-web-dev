@@ -1,61 +1,91 @@
 (function($) {
 
-  // 포트폴리오 현황
-  var port_situation_chart = new Highcharts.Chart({
-      title: {
-          text: '',
-          style: {
-              display: 'none'
+  function draw_charts() {
+    var port_id = $('#saved_port_id').attr('value')
+
+    $.ajax({
+      method: "GET",
+      url: '/api/portfolio/' + port_id + '/diagnosis/',
+      success: function(data){
+        var ratio = data.port_info.ratio
+        var left_ratio = 1
+        var ratio_array = []
+        for (var key in ratio) {
+          if (key != 'cash') {
+            var ratio_point = parseFloat(ratio[key]['ratio'])
+            var ratio_data = [key, ratio_point]
+            ratio_array.push(ratio_data)
+            left_ratio -= ratio_point
+          } else {
+            // pass
           }
+        }
+        var ratio_data = [key, left_ratio]
+        ratio_array.push(ratio_data)
+        console.log(ratio_array)
+        draw_port_situation(ratio_array)
       },
-      subtitle: {
-          text: '',
-          style: {
-              display: 'none'
-          }
+      error: function(data){
+        console.log('error')
+      }
+    })
+  }
+
+  draw_charts()
+
+
+  function draw_port_situation(data) {
+    // 포트폴리오 현황
+    var port_situation_chart = new Highcharts.Chart({
+        title: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        subtitle: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        chart: {
+            renderTo: 'port_situation',
+            type: 'pie',
+            backgroundColor: '#27314f',
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                borderColor: '#27314f',
+                innerSize: '60%',
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        color: 'white'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: '비중',
+            data: data}]
       },
-      chart: {
-          renderTo: 'port_situation',
-          type: 'pie',
-          backgroundColor: '#27314f',
-      },
-      credits: {
-          enabled: false
-      },
-      plotOptions: {
-          pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              borderColor: '#27314f',
-              innerSize: '60%',
-              dataLabels: {
-                  enabled: true,
-                  style: {
-                      color: 'white'
-                  }
-              }
-          }
-      },
-      series: [{
-          name: '비중',
-          data: [
-              ['Firefox', 44.2],
-              ['IE7', 26.6],
-              ['IE6', 20],
-              ['Chrome', 3.1],
-              ['Other', 5.4]
-              ]}]
-    },
-    // using
-    function(port_situation_chart) { // on complete
-        var xpos = '50%'
-        var ypos = '53%'
-        var circleradius = 102
-    // Render the circle
-    port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-        fill: '#27314f',
-    }).add()
-  })
+      // using
+      function(port_situation_chart) { // on complete
+          var xpos = '50%'
+          var ypos = '53%'
+          var circleradius = 102
+      // Render the circle
+      port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
+          fill: '#27314f',
+      }).add()
+    })
+  }
 
   // 포트폴리오 스펙
   var port_spec_chart = new Highcharts.Chart({
@@ -262,232 +292,232 @@
     }]
   })
 
-  // 시장
-  var port_situation_chart = new Highcharts.Chart({
-      title: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      subtitle: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      chart: {
-          renderTo: 'market_chart',
-          type: 'pie',
-          backgroundColor: '#27314f',
-      },
-      credits: {
-          enabled: false
-      },
-      plotOptions: {
-          pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              borderColor: '#27314f',
-              innerSize: '60%',
-              dataLabels: {
-                  enabled: true,
-                  style: {
-                      color: 'white'
-                  }
-              }
-          }
-      },
-      series: [{
-          name: '비중',
-          data: [
-              ['Firefox', 44.2],
-              ['IE7', 26.6],
-              ['IE6', 20],
-              ['Chrome', 3.1],
-              ['Other', 5.4]
-              ]}]
-    },
-    // using
-    function(port_situation_chart) { // on complete
-        var xpos = '50%'
-        var ypos = '53%'
-        var circleradius = 102
-    // Render the circle
-    port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-        fill: '#27314f',
-    }).add()
-  })
-
-  // 사이즈
-  var port_situation_chart = new Highcharts.Chart({
-      title: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      subtitle: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      chart: {
-          renderTo: 'size_chart',
-          type: 'pie',
-          backgroundColor: '#27314f',
-      },
-      credits: {
-          enabled: false
-      },
-      plotOptions: {
-          pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              borderColor: '#27314f',
-              innerSize: '60%',
-              dataLabels: {
-                  enabled: true,
-                  style: {
-                      color: 'white'
-                  }
-              }
-          }
-      },
-      series: [{
-          name: '비중',
-          data: [
-              ['Firefox', 44.2],
-              ['IE7', 26.6],
-              ['IE6', 20],
-              ['Chrome', 3.1],
-              ['Other', 5.4]
-              ]}]
-    },
-    // using
-    function(port_situation_chart) { // on complete
-        var xpos = '50%'
-        var ypos = '53%'
-        var circleradius = 102
-    // Render the circle
-    port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-        fill: '#27314f',
-    }).add()
-  })
-
-  // 스타일
-  var port_situation_chart = new Highcharts.Chart({
-      title: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      subtitle: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      chart: {
-          renderTo: 'style_chart',
-          type: 'pie',
-          backgroundColor: '#27314f',
-      },
-      credits: {
-          enabled: false
-      },
-      plotOptions: {
-          pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              borderColor: '#27314f',
-              innerSize: '60%',
-              dataLabels: {
-                  enabled: true,
-                  style: {
-                      color: 'white'
-                  }
-              }
-          }
-      },
-      series: [{
-          name: '비중',
-          data: [
-              ['Firefox', 44.2],
-              ['IE7', 26.6],
-              ['IE6', 20],
-              ['Chrome', 3.1],
-              ['Other', 5.4]
-              ]}]
-    },
-    // using
-    function(port_situation_chart) { // on complete
-        var xpos = '50%'
-        var ypos = '53%'
-        var circleradius = 102
-    // Render the circle
-    port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-        fill: '#27314f',
-    }).add()
-  })
-
-  // 섹터
-  var port_situation_chart = new Highcharts.Chart({
-      title: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      subtitle: {
-          text: '',
-          style: {
-              display: 'none'
-          }
-      },
-      chart: {
-          renderTo: 'sector_chart',
-          type: 'pie',
-          backgroundColor: '#27314f',
-      },
-      credits: {
-          enabled: false
-      },
-      plotOptions: {
-          pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              borderColor: '#27314f',
-              innerSize: '60%',
-              dataLabels: {
-                  enabled: true,
-                  style: {
-                      color: 'white'
-                  }
-              }
-          }
-      },
-      series: [{
-          name: '비중',
-          data: [
-              ['Firefox', 44.2],
-              ['IE7', 26.6],
-              ['IE6', 20],
-              ['Chrome', 3.1],
-              ['Other', 5.4]
-              ]}]
-    },
-    // using
-    function(port_situation_chart) { // on complete
-        var xpos = '50%'
-        var ypos = '53%'
-        var circleradius = 102
-    // Render the circle
-    port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-        fill: '#27314f',
-    }).add()
-  })
+  // // 시장
+  // var port_situation_chart = new Highcharts.Chart({
+  //     title: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     subtitle: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     chart: {
+  //         renderTo: 'market_chart',
+  //         type: 'pie',
+  //         backgroundColor: '#27314f',
+  //     },
+  //     credits: {
+  //         enabled: false
+  //     },
+  //     plotOptions: {
+  //         pie: {
+  //             allowPointSelect: true,
+  //             cursor: 'pointer',
+  //             borderColor: '#27314f',
+  //             innerSize: '60%',
+  //             dataLabels: {
+  //                 enabled: true,
+  //                 style: {
+  //                     color: 'white'
+  //                 }
+  //             }
+  //         }
+  //     },
+  //     series: [{
+  //         name: '비중',
+  //         data: [
+  //             ['Firefox', 44.2],
+  //             ['IE7', 26.6],
+  //             ['IE6', 20],
+  //             ['Chrome', 3.1],
+  //             ['Other', 5.4]
+  //             ]}]
+  //   },
+  //   // using
+  //   function(port_situation_chart) { // on complete
+  //       var xpos = '50%'
+  //       var ypos = '53%'
+  //       var circleradius = 102
+  //   // Render the circle
+  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
+  //       fill: '#27314f',
+  //   }).add()
+  // })
+  //
+  // // 사이즈
+  // var port_situation_chart = new Highcharts.Chart({
+  //     title: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     subtitle: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     chart: {
+  //         renderTo: 'size_chart',
+  //         type: 'pie',
+  //         backgroundColor: '#27314f',
+  //     },
+  //     credits: {
+  //         enabled: false
+  //     },
+  //     plotOptions: {
+  //         pie: {
+  //             allowPointSelect: true,
+  //             cursor: 'pointer',
+  //             borderColor: '#27314f',
+  //             innerSize: '60%',
+  //             dataLabels: {
+  //                 enabled: true,
+  //                 style: {
+  //                     color: 'white'
+  //                 }
+  //             }
+  //         }
+  //     },
+  //     series: [{
+  //         name: '비중',
+  //         data: [
+  //             ['Firefox', 44.2],
+  //             ['IE7', 26.6],
+  //             ['IE6', 20],
+  //             ['Chrome', 3.1],
+  //             ['Other', 5.4]
+  //             ]}]
+  //   },
+  //   // using
+  //   function(port_situation_chart) { // on complete
+  //       var xpos = '50%'
+  //       var ypos = '53%'
+  //       var circleradius = 102
+  //   // Render the circle
+  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
+  //       fill: '#27314f',
+  //   }).add()
+  // })
+  //
+  // // 스타일
+  // var port_situation_chart = new Highcharts.Chart({
+  //     title: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     subtitle: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     chart: {
+  //         renderTo: 'style_chart',
+  //         type: 'pie',
+  //         backgroundColor: '#27314f',
+  //     },
+  //     credits: {
+  //         enabled: false
+  //     },
+  //     plotOptions: {
+  //         pie: {
+  //             allowPointSelect: true,
+  //             cursor: 'pointer',
+  //             borderColor: '#27314f',
+  //             innerSize: '60%',
+  //             dataLabels: {
+  //                 enabled: true,
+  //                 style: {
+  //                     color: 'white'
+  //                 }
+  //             }
+  //         }
+  //     },
+  //     series: [{
+  //         name: '비중',
+  //         data: [
+  //             ['Firefox', 44.2],
+  //             ['IE7', 26.6],
+  //             ['IE6', 20],
+  //             ['Chrome', 3.1],
+  //             ['Other', 5.4]
+  //             ]}]
+  //   },
+  //   // using
+  //   function(port_situation_chart) { // on complete
+  //       var xpos = '50%'
+  //       var ypos = '53%'
+  //       var circleradius = 102
+  //   // Render the circle
+  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
+  //       fill: '#27314f',
+  //   }).add()
+  // })
+  //
+  // // 섹터
+  // var port_situation_chart = new Highcharts.Chart({
+  //     title: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     subtitle: {
+  //         text: '',
+  //         style: {
+  //             display: 'none'
+  //         }
+  //     },
+  //     chart: {
+  //         renderTo: 'sector_chart',
+  //         type: 'pie',
+  //         backgroundColor: '#27314f',
+  //     },
+  //     credits: {
+  //         enabled: false
+  //     },
+  //     plotOptions: {
+  //         pie: {
+  //             allowPointSelect: true,
+  //             cursor: 'pointer',
+  //             borderColor: '#27314f',
+  //             innerSize: '60%',
+  //             dataLabels: {
+  //                 enabled: true,
+  //                 style: {
+  //                     color: 'white'
+  //                 }
+  //             }
+  //         }
+  //     },
+  //     series: [{
+  //         name: '비중',
+  //         data: [
+  //             ['Firefox', 44.2],
+  //             ['IE7', 26.6],
+  //             ['IE6', 20],
+  //             ['Chrome', 3.1],
+  //             ['Other', 5.4]
+  //             ]}]
+  //   },
+  //   // using
+  //   function(port_situation_chart) { // on complete
+  //       var xpos = '50%'
+  //       var ypos = '53%'
+  //       var circleradius = 102
+  //   // Render the circle
+  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
+  //       fill: '#27314f',
+  //   }).add()
+  // })
 
 })(jQuery)

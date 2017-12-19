@@ -23,6 +23,7 @@ document.createElement("time"   );
         <!--END 모든페이지 공통-->
         <!--서브 페이지-->
         <link rel="stylesheet" href="{% static 'css/sub-page.css' %}" type="text/css" media="all">
+        <script type="text/javascript" src="{% static 'js/sub_page.js' %}"></script>
         <!--END 서브 페이지-->
         <!--rms js-->
         <script type="text/javascript" src="{% static 'js/rms.js' %}"></script>
@@ -61,8 +62,8 @@ data-page에 메인페이지 인지 서브페이지 인지 구분해주세요~!
                         {% if user.is_authenticated %}
                         <div class="header_right_info">
                           <div class="myinfo_wrap">
-                              <a href="" class="notice_btn">notice</a>
-                              <span>|</span>
+                              <!-- <a href="" class="notice_btn">notice</a>
+                              <span>|</span> -->
                               <!--header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
                               <span class="header_myname">{{ user.username }}({{ user.email }})</span>
                               <!--END header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
@@ -124,8 +125,7 @@ data-page에 메인페이지 인지 서브페이지 인지 구분해주세요~!
 현재 페이지에 메세지가 있다면
 message_on을 클래스명에 넣어주세요
 -->
-                <a class="identity_icon_btn">
-                    <figure class="circle_icon"></figure>
+                <a class="identity_icon_btn message_on">
                     <figure class="bee_icon"></figure>
                 </a>
                 <!-- END 메세지 알림 -->
@@ -163,6 +163,7 @@ message_on을 클래스명에 넣어주세요
                         <a id="reselect_submit_btn">다시하기</a>
                     </li>
                 </ul>
+                <div id="saved_port_id" value="{{ portfolio.id }}"></div>
             </div>
             <div class="content_row_wrap">
                 <div class="sub_container">
@@ -224,7 +225,8 @@ message_on을 클래스명에 넣어주세요
                             </div>
                         </div>
                     </div>
-                    <div id="portfolio_result3" class="result_wrap wrap_gutter_ratio et-col-wrap clear_col">
+                    <!-- don't forget to erase slapdash style before launching -->
+                    <div id="portfolio_result3" class="result_wrap wrap_gutter_ratio et-col-wrap clear_col" style="margin-bottom: 75px;">
                         <div class="col col-et-12 result_col1 col_gutter">
                             <div class="result_bg light_bg">
                                 <div class="portfolio_name accent-color">최용준의 포트폴리오</div>
@@ -275,13 +277,13 @@ message_on을 클래스명에 넣어주세요
                             </div>
                         </div>
                     </div>
-                    <div class="portfolio_graph_wrap wrap_gutter_ratio et-col-wrap clear_col">
+                    <!-- <div class="portfolio_graph_wrap wrap_gutter_ratio et-col-wrap clear_col">
                         <div class="col col_gutter col-et-3">
                             <div class="light_bg">
                                 <div class="accent-color portfoilo_name">시장</div>
                                 <div id="market_chart" class="rms_graph_col">
                                     <div class="rms_portfolio_graph">
-                                        <!-- <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png"> -->
+                                        <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png">
                                     </div>
                                 </div>
                             </div>
@@ -291,7 +293,7 @@ message_on을 클래스명에 넣어주세요
                                 <div class="accent-color portfoilo_name">사이즈</div>
                                 <div id="size_chart" class="rms_graph_col">
                                     <div class="rms_portfolio_graph">
-                                        <!-- <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png"> -->
+                                        <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png">
                                     </div>
                                 </div>
                             </div>
@@ -301,7 +303,7 @@ message_on을 클래스명에 넣어주세요
                                 <div class="accent-color portfoilo_name">스타일</div>
                                 <div id="style_chart" class="rms_graph_col">
                                     <div class="rms_portfolio_graph">
-                                        <!-- <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png"> -->
+                                        <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png">
                                     </div>
                                 </div>
                             </div>
@@ -311,7 +313,7 @@ message_on을 클래스명에 넣어주세요
                                 <div class="accent-color portfoilo_name">섹터</div>
                                 <div id="sector_chart" class="rms_graph_col">
                                     <div class="rms_portfolio_graph">
-                                        <!-- <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png"> -->
+                                        <img src="/etemmu/asset/img/ex_img/ex_circle_graph.png">
                                     </div>
                                 </div>
                             </div>
@@ -372,7 +374,7 @@ message_on을 클래스명에 넣어주세요
                             <a href="#">3</a>
                             <a href="#">4</a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </section>

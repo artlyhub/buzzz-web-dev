@@ -23,12 +23,31 @@ class PortfolioAlgorithm:
         }
         self._start_df_setup() # fill in ticker_list and ohlcv_list
         self._retrieve_weights()
+        self._create_ohlcv_df()
         self._calc_port_returns()
 
-    def create_ohlcv_df(self):
+    def _start_df_setup(self):
+        for key, val in self.ratio_dict.items():
+            if key != 'cash':
+                self.settings['ticker_list'].append(key)
+                ohlcv_qs = OHLCV.objects.filter(code=key).distinct('date')
+                ohlcv = list(ohlcv_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
+                self.settings['ohlcv_list'].append(ohlcv)
+
+    def _retrieve_weights(self):
+        S = list()
+        W = list()
+        for key, val in self.ratio_dict.items():
+            if key != 'cash':
+                S.append(key)
+                W.append(val['ratio'])
+        W = pd.Series(W, index=S)
+        self.W = W
+
+    def _create_ohlcv_df(self):
         ticker_count = len(self.settings['ticker_list'])
         if ticker_count == 0:
-            self.ohlcv_df = pd.DataFrame()
+            pass
         elif ticker_count == 1:
             ticker = self.settings['ticker_list'][0]
             ohlcv = self.settings['ohlcv_list'][0]
@@ -45,6 +64,18 @@ class PortfolioAlgorithm:
             df.index = pd.to_datetime(df.index)
             self.ohlcv_df = df
 
+    def _create_df(self, ticker, ohlcv):
+        df = pd.DataFrame(ohlcv)
+        df.set_index('date', inplace=True)
+        df.rename(columns={'close_price': ticker}, inplace=True)
+        return df
+
+    def _calc_port_returns(self, period='M'):
+        self.ohlcv_df.index = pd.to_datetime(self.ohlcv_df.index)
+        R = self.ohlcv_df.resample(period).last().pct_change()
+        R.dropna(how='all', inplace=True)
+        self.R = R
+
     def portfolio_info(self):
         BM_wr, BM_r, BM_v, BM_yc = self._bm_specs()
         wr, r, v, yc = self._backtest_port(self.W, self.R)
@@ -54,48 +85,17 @@ class PortfolioAlgorithm:
         bt.columns = ['Portfolio', 'Benchmark']
         return r, v, sr, yield_r, bt
 
-    def change_bt_format(self, bt):
-        new_data = dict()
-        for column in bt.columns:
-            ret_data = list()
-            dates = bt.index.astype(np.int64)
-            for i in range(len(bt)-1):
-                data = bt.ix[i]
-                date = dates[i]
-                ret_data.append([date, data[column]])
-            new_data[column] = ret_data
-        return new_data
-
-    def _start_df_setup(self):
-        for key, val in self.ratio_dict.items():
-            if key != 'cash':
-                self.settings['ticker_list'].append(key)
-                ticker_inst = Ticker.objects.filter(date=val['date']).filter(code=key).first()
-                ohlcv_qs = OHLCV.objects.filter(code=ticker_inst).distinct('date')
-                ohlcv = list(ohlcv_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
-                self.settings['ohlcv_list'].append(ohlcv)
-
-    def _create_df(self, ticker, ohlcv):
-        df = pd.DataFrame(ohlcv)
-        df.set_index('date', inplace=True)
-        df.rename(columns={'close_price': ticker}, inplace=True)
-        return df
-
-    def _retrieve_weights(self):
-        S = list()
-        W = list()
-        for key, val in self.ratio_dict.items():
-            if key != 'cash':
-                S.append(key)
-                W.append(val['ratio'])
-        W = pd.Series(W, index=S)
-        self.W = W
-
-    def _calc_port_returns(self, period='M'):
-        self.ohlcv_df.index = pd.to_datetime(self.ohlcv_df.index)
-        R = self.ohlcv_df.resample(period).last().pct_change()
-        R.dropna(how='all', inplace=True)
-        self.R = R
+    def _bm_specs(self, period='M'):
+        BM_qs = OHLCV.objects.filter(code='BM').distinct('date')
+        BM_data = list(BM_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
+        BM = pd.DataFrame(BM_data)
+        BM.set_index('date', inplace=True)
+        BM.index = pd.to_datetime(BM.index)
+        BM.rename(columns={'close_price': 'Benchmark'}, inplace=True)
+        BM_R = BM.resample(period).last().pct_change()
+        BM_R.dropna(how='all', inplace=True)
+        W = pd.Series([1], index=['Benchmark'])
+        return self._backtest_port(W, BM_R)
 
     def _backtest_port(self, W=None, BM=None):
         if type(W) == type(None) and type(BM) == type(None):
@@ -108,15 +108,17 @@ class PortfolioAlgorithm:
         yield_curve = (WR + 1).cumprod()
         return WR, port_ret, port_var, yield_curve
 
-    def _bm_specs(self):
-        BM_qs = OHLCV.objects.filter(code__code__contains='BM').distinct('date')
-        BM_data = list(BM_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
-        BM = pd.DataFrame(BM_data)
-        BM.set_index('date', inplace=True)
-        BM.index = pd.to_datetime(BM.index)
-        BM.rename(columns={'close_price': 'Benchmark'}, inplace=True)
-        W = pd.Series([1], index=['Benchmark'])
-        return self._backtest_port(W, BM)
-
     def _sharpe_ratio(self, r, bm_r, v):
         return (r - bm_r)/v
+
+    def change_bt_format(self, bt):
+        new_data = dict()
+        for column in bt.columns:
+            ret_data = list()
+            dates = bt.index.astype(np.int64)
+            for i in range(len(bt)):
+                data = bt.ix[i]
+                date = dates[i]
+                ret_data.append([date, round(data[column], 4)])
+            new_data[column] = ret_data
+        return new_data

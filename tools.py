@@ -18,6 +18,7 @@ application = get_wsgi_application()
 from tools.Benchmark import Benchmark
 from tools.Cleaner import Cleaner
 from tools.Data import Data
+from tools.Processor import Processor
 from tools.Sensitives import Sensitives
 import tools.KRX as KRX
 
@@ -42,7 +43,7 @@ elif sys.argv[1] == 'sensitives':
 elif sys.argv[1] == 'bm':
     b = Benchmark(start_path)
     df, exists = b.get()
-    recent_date = df.ix[len(df)-1]['Date'].replace('-', '')
+    recent_date = list(df.ix[len(df)-1])[0].replace('-', '')
     if exists:
         print('Recent update: ' + recent_date)
     else:
@@ -53,8 +54,17 @@ elif sys.argv[1] == 'data':
     if sys.argv[2] == 'send':
         if sys.argv[3] == 'ticker':
             d.send_ticker()
+        elif sys.argv[3] == 'bm':
+            d.send_bm()
         elif sys.argv[3] == 'ohlcv':
             d.send_ohlcv()
 
 elif sys.argv[1] == 'krx':
     KRX.main(start_path)
+
+elif sys.argv[1] == 'process':
+    p = Processor()
+    p.get_data_local()
+    p.set_return_portfolio()
+    p.bm_data()
+    p.save_mom_volt_cor_vol()
