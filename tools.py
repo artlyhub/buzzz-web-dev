@@ -17,7 +17,7 @@ from tools.Cleaner import Cleaner
 from tools.Data import Data
 from tools.Processor import Processor
 from tools.Sensitives import Sensitives
-import tools.KRX as KRX
+# import tools.KRX as KRX
 
 if sys.argv[1] == 'cleanmigrations':
     c = Cleaner(start_path)
