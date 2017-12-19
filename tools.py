@@ -1,7 +1,4 @@
-## @Ver     0.8v
-## @Author  Phillip Park
-## @Date    2017/12/17
-## @Details tools에 있는 모듈들을 합쳐주는 기능
+
 
 import os, sys, glob
 
