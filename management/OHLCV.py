@@ -19,15 +19,13 @@ import os
 today_date = "20171211" #datetime.now().strftime("%Y%m%d")
 #평균 걸린 시간
 av_time = 0
-
-print(os.getcwd())
+#working directory
+cwd = os.getcwd()
 
 
 
 #Ticker 가져오기(code)
-# buzzz_url = 'http://buzzz.co.kr/api/ticker/'
-dest_path = 'data'
-# ticker = get_buzz_data(today_date+"_ticker", buzzz_url, dest_path)
+dest_path =cwd+'\\data'
 ticker = Ticker.objects.filter(date="20171208")
 
 
@@ -56,7 +54,7 @@ for t in range(index, 401):
 	r = requests.get(url, headers = user_agent, auth=('user', 'pass'))
 	d = r.text
 	soup = BeautifulSoup(d, "html.parser")
-	#page 수 찾기 
+	#page 수 찾기
 	for end in soup.find_all('a', href=True):
 		pass
 	page = re.findall('\d+', end['href'][-4:])[0]
@@ -123,18 +121,3 @@ for t in range(index, 401):
 	print("average = ", av_time)
 
 f.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

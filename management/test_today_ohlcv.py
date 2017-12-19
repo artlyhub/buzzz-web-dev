@@ -18,7 +18,7 @@ def get_ohlcv():
 	start_time = time.time()
 
 	#오늘 날짜
-	today_date = "20171211" #datetime.now().strftime('%Y%m%d')
+	today_date = datetime.now().strftime('%Y%m%d')
 
 	#ticker가져오기
 	ticker = Ticker.objects.filter(date=today_date)

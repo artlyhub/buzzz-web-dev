@@ -78,6 +78,23 @@ class OHLCVAPIView(generics.ListCreateAPIView):
     serializer_class = OHLCVSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = StandardResultPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = OHLCV.objects.all()
+        date_by = self.request.GET.get('date')
+        code_by = self.request.GET.get('code')
+        ticker_id = Ticker.objects.filter(code=code_by).order_by('-date').first().id
+        if date_by and ticker_id:
+            queryset_list = queryset.filter(date=date_by).filter(code=ticker_id)
+            return queryset_list
+        if date_by and not ticker_id:
+            queryset_list = queryset.filter(date=date_by)
+            return queryset_list
+        if ticker_id and not date_by:
+            queryset_list = queryset.filter(code=ticker_id)
+            return queryset_list
+        return queryset
 
 
 class OHLCVDetailAPIView(generics.RetrieveUpdateDestroyAPIView):

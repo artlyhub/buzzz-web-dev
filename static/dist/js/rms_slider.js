@@ -14,7 +14,7 @@
 
             // on page slide - default behaviors override
             if (page_num == 3) {
-              location.href = '/rms'
+              save_portfolio_on_click(true)
             }
 
             else if (page_num == 1) {
