@@ -22,6 +22,7 @@ document.createElement("time"   );
         <!--END 모든페이지 공통-->
         <!--서브 페이지-->
         <link rel="stylesheet" href="{% static 'css/sub-page.css' %}" type="text/css" media="all">
+        <script type="text/javascript" src="{% static 'js/sub_page.js' %}"></script>
         <!--END 서브 페이지-->
         <!--rms js-->
         <script type="text/javascript" src="{% static 'js/rms.js' %}"></script>
@@ -51,8 +52,8 @@ data-page에 메인페이지 인지 서브페이지 인지 구분해주세요~!
                         {% if user.is_authenticated %}
                         <div class="header_right_info">
                           <div class="myinfo_wrap">
-                              <a href="" class="notice_btn">notice</a>
-                              <span>|</span>
+                              <!-- <a href="" class="notice_btn">notice</a>
+                              <span>|</span> -->
                               <!--header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
                               <span class="header_myname">{{ user.username }}({{ user.email }})</span>
                               <!--END header_myinfo strong 태그 안에 이름과 아이디 노출 시켜주세요-->
@@ -114,8 +115,7 @@ data-page에 메인페이지 인지 서브페이지 인지 구분해주세요~!
 현재 페이지에 메세지가 있다면
 message_on을 클래스명에 넣어주세요
 -->
-                <a class="identity_icon_btn">
-                    <figure class="circle_icon"></figure>
+                <a class="identity_icon_btn message_on">
                     <figure class="bee_icon"></figure>
                 </a>
                 <!-- END 메세지 알림 -->
@@ -151,6 +151,9 @@ message_on을 클래스명에 넣어주세요
                             <div class="title">
                                 <p>포트폴리오 저장을 위해 이름을</p>
                                 <p>등록해주세요</p>
+                                <div class="sub_popup_close">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </div>
                             </div>
                             <div class="save_input_wrap clear_col">
                                 <input id="save_name" class="col" type="text" placeholder="포트폴리오 이름.">
@@ -217,7 +220,12 @@ message_on을 클래스명에 넣어주세요
                                               <a id="rms_save_list" class="slider_btn">종목담기</a>
                                               <a class="slider_btn2">시작하기</a>
                                               <div id="rms_search_list" class="search_list_wrap">
-                                                <div class="search_list_title">종목 리스트</div>
+                                                <div class="search_list_title">
+                                                    <span>종목 리스트</span>
+                                                    <div class="sub_popup_close">
+                                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
                                                 <div class="search_list"></div>
                                                 <a id="search_list_submit">그만보기</a>
                                               </div>

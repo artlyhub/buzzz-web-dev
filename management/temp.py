@@ -1,9 +1,53 @@
 # import pickle
-import os
+import os, sys, io
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 from restapi.models import Ticker
 from restapi.models import OHLCV
-# from management.common_function import *
+
+
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
+
+url = "http://finance.naver.com/item/sise_day.nhn?code=032280"
+print(url)
+df = pd.read_html(url, thousands='')
+market_date = df[0].ix[1][0]
+print(type(market_date))
+market_date = market_date.replace(".", "")
+print(market_date)
+print(market_date == "20171220")
+
+#
+#
+#
+#
+# url = "http://finance.naver.com/item/coinfo.nhn?code=005930"
+# user_agent = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
+# r = requests.get(url, headers= user_agent, auth=('user', 'pass'))
+# d = r.text
+# soup = BeautifulSoup(d, "html.parser")
+#
+#
+# # table = soup.find('div', {'class' : 'first'})
+# industry = soup.find('div', {'id':'pArea'})#.find_next().find_next().find_next()
+#
+# print(industry)
+# # print(table)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # with open('../sensitives.pickle', 'rb') as f:
 # 	data = pickle.load(f)
@@ -30,7 +74,7 @@ from restapi.models import OHLCV
 # for t in range(650, 660):
 # 	ohlcv = OHLCV.objects.filter(code=ticker['id'][t]).distinct('date')
 # 	print("ohlcv: ", ohlcv)
-	
+
 
 # ex = OHLCV.objects.exclude(date__in=ohlcv.values('date'))
 # print("ex: " , ex)
@@ -42,16 +86,7 @@ from restapi.models import OHLCV
 # print (ex)
 
 # Address.objects.exclude(pk__in=d.values('pk', flat=True)).delete()
- 
 
-
-
-# ticker = Ticker.objects.filter(date="20171208").filter(code="027740")
-# print(ticker)
-# print(ticker[0])
-# print(len(ticker))
-# print(ticker[3].code)
-# print(ticker[3].name)
 
 
 
@@ -59,37 +94,3 @@ from restapi.models import OHLCV
 # 	print("not exists")
 # else:
 # 	print("exist!")
-
-
-# for i in range(10):
-# 	print(ohlcv[i])
-# 	print(ohlcv[i].code)
-# 	print(ohlcv[i].date)
-
-# if not(OHLCV.objects.filter(code=ticker[3].id).filter(date="20171208").exists()):
-# 	print("2")
-# else:
-# 	print("3")
-
-#빈파일 여부 확인
-# print(os.stat("..\\data\\OHLCV_log.txt").st_size == 0)
-
-# ticker = Ticker.objects.filter(date="20171208")
-
-# for i in range(8):
-# 	ohlcv = OHLCV.objects.filter(code=ticker[i])
-# 	print(ohlcv)
-# 	print(len(ohlcv))
-	# for j in range(len(ohlcv)):
-	# 	if(j>=int(len(ohlcv)/2)):
-	# 		ohlcv[j].delete()
-
-
-ticker = Ticker.objects.filter(date="20171211")
-print(ticker[124].code)
-print(ticker[125].code)
-print(ticker[126].code)
-# for i in range(774):
-# 	print(str(i)+" ", OHLCV.objects.filter(code=ticker[i]))
-# 	print(len(OHLCV.objects.filter(code=ticker[i])))
-

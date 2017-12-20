@@ -3,7 +3,7 @@ Theme Name: buzz style
 Description: theme for buzz
 Author: Etemmu Studio
 Template: buzz
-Version: 0.2.0 (20171204 수정)
+Version: 0.2.0 (20171218 수정)
 */
 
 /*
@@ -540,7 +540,7 @@ header>.identity_btn_wrap>.identity_icon_btn:hover>.circle_icon {
     display: none;
 }
 header>.identity_btn_wrap>.identity_icon_btn>.bee_icon {
-    display: none;
+    display: inline-block;
     background-image: url('/static/img/bee_icon.svg');
     width: 31px;
     height: 39px;
@@ -567,7 +567,7 @@ header>.identity_btn_wrap>.identity_popup {
 }
 header>.identity_btn_wrap>.identity_popup>.identity_title {
     font-weight: 700;
-    margin-bottom: 20px;
+    padding-bottom: 20px;
 }
 header>.identity_btn_wrap>.identity_popup>.identity_description>p {
     margin-bottom: 25px;
@@ -610,7 +610,7 @@ section, .row_wrap, .content_row_wrap {
 #popup>.popup_contents {
     max-width: 450px;
     width: 100%;
-    margin: 230px auto 190px auto;
+    margin: 190px auto 190px auto;
     background-color: #27314f;
     box-sizing: border-box;
     padding: 37px 40px;
@@ -629,7 +629,7 @@ section, .row_wrap, .content_row_wrap {
 }
 
 #popup>#register_popup {
-    margin-bottom: 150px;
+    margin: 100px auto 100px auto;
 }
 .popup_info {
     line-height: 20px;
@@ -675,7 +675,7 @@ section, .row_wrap, .content_row_wrap {
 }
 .popup_input_wrap>.popup_col>#register_email,
 .popup_input_wrap>.popup_col>#login_email {
-    /*width: calc(100% - 130px);*/
+    /* width: calc(100% - 130px); */
     margin-right: 17px;
 }
 .popup_input_wrap>.popup_col>.email_check {

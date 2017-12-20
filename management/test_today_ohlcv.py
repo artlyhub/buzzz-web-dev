@@ -13,57 +13,50 @@ import time
 
 
 
+# url = "http://finance.naver.com/item/sise_day.nhn?code=011300"
+# print(url)
+# df = pd.read_html(url, thousands='')
+#
+# open_price = int(df[0].ix[1][3].replace(",", ""))
+# high_price = int(df[0].ix[1][4].replace(",", ""))
+# low_price = int(df[0].ix[1][5].replace(",", ""))
+# close_price = int(df[0].ix[1][1].replace(",", ""))
+# volume = int(df[0].ix[1][6].replace(",", ""))
+# print (open_price)
+# print(high_price)
+# print(low_price)
+# print(close_price)
+# print(volume)
+#
+
+
 def get_ohlcv():
-
-	start_time = time.time()
-
 	#오늘 날짜
-	today_date = datetime.now().strftime('%Y%m%d')
-
+	date = datetime.now().strftime('%Y%m%d')
 	#ticker가져오기
-	ticker = Ticker.objects.filter(date=today_date)
+	ticker = Ticker.objects.filter(date=date)
+	#오늘 ohlcv 가져오기(중복방지)
+	ohlcv = OHLCV.objects.filter(date=date)
 
-	#중단된 지점 확인 
-	index = end_point_check("data\\"+today_date+"_daily_ohlcv_log.txt", ticker)
-	index += 1 #다음 거부터 시작~
-
-	#log 기록용
-	f = open("data\\"+today_date+"_daily_ohlcv_log.txt", 'w')
-
-
-	for i in range(index, len(ticker)):
-		if not(OHLCV.objects.filter(code=ticker[i]).filter(date=today_date).exists()):
+	ohlcv_list = []
+	for i in range(len(ticker)):
+		if not(ohlcv.filter(code=ticker[i].code).exists()):
 			#OHLCV
-			url = "http://finance.naver.com/item/sise_day.nhn?code="+str(ticker[i].code) 
+			url = "http://finance.naver.com/item/sise_day.nhn?code="+str(ticker[i].code)
+			print(url)
 			df = pd.read_html(url, thousands='')
-			if (str(df[0].ix[1][3]) == "nan"):
-				open_price = 0
-				high_price = 0
-				low_price = 0
-				close_price = 0
-				volume = 0
-			else:
-				open_price = int(df[0].ix[1][3].replace(",", ""))
-				high_price = int(df[0].ix[1][4].replace(",", ""))
-				low_price = int(df[0].ix[1][5].replace(",", ""))
-				close_price = int(df[0].ix[1][1].replace(",", ""))
-				volume = int(df[0].ix[1][6].replace(",", ""))
 
-			data = OHLCV(code=ticker[i], date=today_date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
-			data.save()
-		f.write(str(i)+" "+ticker[i].code+"\n")
+			open_price = int(df[0].ix[1][3].replace(",", ""))
+			high_price = int(df[0].ix[1][4].replace(",", ""))
+			low_price = int(df[0].ix[1][5].replace(",", ""))
+			close_price = int(df[0].ix[1][1].replace(",", ""))
+			volume = int(df[0].ix[1][6].replace(",", ""))
 
-	end_time = time.time()
-	print(end_time-start_time)
-	f.close()
+			data = OHLCV(code=ticker[i].code, date=date, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume)
+			ohlcv_list.append(data)
+			print('added ' + ticker[i].code + ' data')
+	OHLCV.objects.bulk_create(ohlcv_list)
+	print("all process done successfully!")
 
 
 get_ohlcv()
-
-
-
-
-
-
-    
-    
