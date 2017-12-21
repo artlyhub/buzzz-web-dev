@@ -35,6 +35,10 @@ class Data(object):
         df = self._retrieve_data(self.TICKER_PATH, 'tickers.csv')
         return df
 
+    def _retrieve_bm(self):
+        df = self._retrieve_data(self.BM_PATH, 'BM.csv')
+        return df
+
     def _retrieve_ohlcv(self, filename):
         df = self._retrieve_data(self.OHLCV_PATH, filename)
         return df
@@ -58,6 +62,30 @@ class Data(object):
             print('Ticker instances successfully saved to database')
         else:
             print('Ticker instance count mismatch with the file')
+
+    @timeit
+    def send_bm(self):
+        df = self._retrieve_bm()
+        code = 'BM'
+        ohlcv_list = []
+        for row_n in range(len(df)):
+            date, open_price, high_price, low_price, close_price, adj_close_price, volume = list(df.ix[row_n])
+            ohlcv_inst = OHLCV(code=code,
+                                date=str(date).replace('-', '')[:8],
+                                open_price=open_price,
+                                high_price=high_price,
+                                low_price=low_price,
+                                close_price=adj_close_price,
+                                volume=volume)
+            ohlcv_list.append(ohlcv_inst)
+        OHLCV.objects.bulk_create(ohlcv_list)
+        ## test df count and db count ##
+        df_len = len(df)
+        db_count = OHLCV.objects.filter(code=code).count()
+        if df_len == db_count:
+            print('{} OHLCV instances successfully saved to database'.format(code))
+        else:
+            print('{} OHLCV instance count mismatch with the file'.format(code))
 
     @timeit
     def send_ohlcv(self):

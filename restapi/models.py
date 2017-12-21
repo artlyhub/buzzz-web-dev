@@ -38,6 +38,22 @@ class Ticker(models.Model):
         return '{} {}'.format(self.code, self.name)
 
 
+class Specs(models.Model):
+    code = models.CharField(max_length=6)
+    date = models.CharField(max_length=8)
+    momentum = models.FloatField(blank=True, null=True)
+    volatility = models.FloatField(blank=True, null=True)
+    correlation = models.FloatField(blank=True, null=True)
+    volume = models.BigIntegerField(blank=True, null=True)
+    momentum_score = models.IntegerField(blank=True, null=True)
+    volatility_score = models.IntegerField(blank=True, null=True)
+    correlation_score = models.IntegerField(blank=True, null=True)
+    volume_score = models.IntegerField(blank=True, null=True)
+    total_score = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self.code
+
 # class ETF(models.Model):
 #     pass
 

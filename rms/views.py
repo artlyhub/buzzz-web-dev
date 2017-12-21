@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
@@ -33,13 +35,9 @@ class RMSDiagnosisView(View):
             if portfolio.first().user == request.user:
                 context = {'status': '진단'}
             else:
-                history = portfolio.first().history.all()
-                hist_dict = dict()
-                for hist in history:
-                    hist_dict[hist.code.code] = OHLCV.objects.filter(code=hist.code).distinct('date').values_list('date', 'close_price')
                 context = {
                     'status': '진단',
                     'portfolio': portfolio.first(),
-                    'history': hist_dict
+                    'date': datetime.now()
                 }
         return render(self.request, 'rms_opt.html', context)

@@ -34,4 +34,4 @@ class Benchmark(object):
             return self.df, exists
 
     def _save(self):
-        self.df.to_csv(self.DEST + '/BM.csv')
+        self.df.to_csv(self.DEST + '/BM.csv', header=False)

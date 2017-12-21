@@ -74,7 +74,11 @@
         }
 
         if( container2.has(e.target).length === 0) {
-            container2.removeClass('active');
+            if ( e.target.id == 'search_code' ) {
+              // pass
+            } else {
+              container2.removeClass('active');
+            }
         }
 
         if( container3.has(e.target).length === 0) {

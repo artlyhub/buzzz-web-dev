@@ -7,6 +7,7 @@ from restapi.models import (
     Info,
     OHLCV,
     Financial,
+    Specs,
 )
 
 User = get_user_model()
