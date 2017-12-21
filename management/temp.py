@@ -10,14 +10,11 @@ from restapi.models import OHLCV
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
-url = "http://finance.naver.com/item/sise_day.nhn?code=032280"
-print(url)
-df = pd.read_html(url, thousands='')
-market_date = df[0].ix[1][0]
-print(type(market_date))
-market_date = market_date.replace(".", "")
-print(market_date)
-print(market_date == "20171220")
+
+ticker = Ticker.objects.filter(date="20171221", market_type="KP")
+print(ticker)
+print(ticker[0].code)
+print(type(ticker[0].code))
 
 #
 #

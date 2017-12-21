@@ -52,10 +52,10 @@ app.conf.beat_schedule = {
         'args': (),
     },
 
-    'scrape-naver-info-at-4:30': {
-        # Executes every weekday at 4:30 p.m.
+    'scrape-naver-info-at-5:00': {
+        # Executes every weekday at 5:00 p.m.
         'task': 'scrape_naver_info',
-        'schedule': crontab(hour=16, minute=30, day_of_week='mon-fri'),
+        'schedule': crontab(hour=17, day_of_week='mon-fri'),
         'args': (),
     }
 
