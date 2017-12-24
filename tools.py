@@ -1,4 +1,9 @@
+## @Ver     0.8v
+## @Author  Phillip Park
+## @Date    2017/12/23
+## @Details 버즈 프로젝트 관리에 필요한 툴들의 집합소
 
+## @Comments 서버에서는 KRX.py가 작동하지 않음 (dependencies의 문제로 예상)
 
 import os, sys, glob
 

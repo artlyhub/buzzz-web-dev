@@ -118,29 +118,29 @@ class Data(object):
 
 
 
-    def _make_data(self, directory, filename, values):
-        full_path = directory + '\\{}'.format(filename)
-        data = pd.DataFrame(values)
-        data.to_csv(full_path, index=False, header=False)
-        print('{} file saved'.format(filename))
-        return pd.read_csv(full_path, encoding='euc-kr', header=None)
-
-    @property
-    def _ticker_values(self):
-        ticker_qs = Ticker.objects.all()
-        ticker_values = list(ticker_qs.values_list('code',
-                                                   'date',
-                                                   'name',
-                                                   'market_type'))
-        return ticker_values
-
-    def _ohlcv_values(self, ticker):
-        ohlcv_qs = OHLCV.objects.filter(code=ticker)
-        ohlcv_values = list(ohlcv_qs.values_list('code',
-                                                 'date',
-                                                 'open_price',
-                                                 'high_price',
-                                                 'low_price',
-                                                 'close_price',
-                                                 'volume'))
-        return ohlcv_values
+    # def _make_data(self, directory, filename, values):
+    #     full_path = directory + '\\{}'.format(filename)
+    #     data = pd.DataFrame(values)
+    #     data.to_csv(full_path, index=False, header=False)
+    #     print('{} file saved'.format(filename))
+    #     return pd.read_csv(full_path, encoding='euc-kr', header=None)
+    #
+    # @property
+    # def _ticker_values(self):
+    #     ticker_qs = Ticker.objects.all()
+    #     ticker_values = list(ticker_qs.values_list('code',
+    #                                                'date',
+    #                                                'name',
+    #                                                'market_type'))
+    #     return ticker_values
+    #
+    # def _ohlcv_values(self, ticker):
+    #     ohlcv_qs = OHLCV.objects.filter(code=ticker)
+    #     ohlcv_values = list(ohlcv_qs.values_list('code',
+    #                                              'date',
+    #                                              'open_price',
+    #                                              'high_price',
+    #                                              'low_price',
+    #                                              'close_price',
+    #                                              'volume'))
+    #     return ohlcv_values
