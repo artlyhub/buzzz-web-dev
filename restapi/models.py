@@ -96,7 +96,7 @@ class OHLCV(models.Model):
     def __str__(self):
         return self.code
 
-
+        
 # class BuySell(models.Model):
 #     pass
 

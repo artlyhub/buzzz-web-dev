@@ -120,7 +120,7 @@ class PortfolioAlgorithm:
             for i in range(len(bt)):
                 data = bt.ix[i]
                 date = dates[i]
-                ret_data.append([date, round(data[column], 4)])
+                ret_data.append([date, float(format(round(data[column], 4), '.4f'))])
             new_data[column] = ret_data
         return new_data
 

@@ -1,4 +1,5 @@
 import time, datetime
+from decimal import Decimal
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -59,6 +60,7 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
 
     def get_port_info(self, obj):
         # STEP 1: Calculate portfolio ratio
+        ### performance: 2s ###
         stocks = obj.history.all()
         stock_counts = stocks.count()
         capital = obj.capital
@@ -94,6 +96,7 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
                     ratio_dict[code]['buy_num'] = 0
             else:
                 continue
+        ### performance: 1s ###
         ratio_dict['cash'] = left_over_capital
         redistribute = left_over_capital > 0
         while redistribute:
@@ -119,27 +122,24 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
         for key, val in ratio_dict.items():
             if key != 'cash':
                 stock_ratio = val['invested']/capital
-                ratio_dict[key]['ratio'] = round(stock_ratio, 4)
+                ratio_dict[key]['ratio'] = float(format(round(stock_ratio, 4), '.4f'))
         # STEP 2: Calculate portfolio specs
+        ### performance: 4s ###
         port_info = {'status': '동일 비중 포트폴리오', 'ratio': ratio_dict}
         pa = PortfolioAlgorithm(ratio_dict)
         r, v, sr, yield_r, bt = pa.portfolio_info()
         new_bt = pa.change_bt_format(bt)
-        port_info['return'] = round(yield_r, 3)*100
-        port_info['average_return'] = round(r, 3)*100
-        port_info['average_volatility'] = round(v, 3)*100
-        port_info['sharpe_ratio'] = round(sr, 3)
+        port_info['return'] = float(format(round(yield_r, 3)*100, '.3f'))
+        port_info['average_return'] = float(format(round(r, 3)*100, '.3f'))
+        port_info['average_volatility'] = float(format(round(v, 3)*100, '.3f'))
+        port_info['sharpe_ratio'] = float(format(round(sr, 3), '.3f'))
         port_info['backtest_result'] = new_bt
         return port_info
 
     def get_port_specs(self, obj):
         stocks = obj.history.all()
         stock_counts = stocks.count()
-        mom_s = 0
-        volt_s = 0
-        cor_s = 0
-        vol_s = 0
-        tot_s = 0
+        mom_s, volt_s, cor_s, vol_s, tot_s = 0, 0, 0, 0, 0
         for stock in stocks:
             code = stock.code.code
             specs = Specs.objects.filter(code=stock.code.code).order_by('date').first()

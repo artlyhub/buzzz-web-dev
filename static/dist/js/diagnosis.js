@@ -16,6 +16,11 @@
       method: "GET",
       url: '/api/portfolio/' + port_id + '/diagnosis/',
       success: function(data){
+        $('#loader-wrapper').fadeOut(1000)
+        $('#rms_portfolio_section').fadeIn(1000)
+        $('#sub_footer').fadeIn(1000)
+        $('.bee_icon').fadeIn(1000)
+
         var ratio = data.port_info.ratio
         var left_ratio = 1
         var ratio_array = []
@@ -56,6 +61,9 @@
     })
   }
 
+  $('#rms_portfolio_section').hide()
+  $('#sub_footer').hide()
+  $('.bee_icon').hide()
   draw_charts()
 
   function parse_port_info(ret, avg_ret, avg_vol, sharpe) {
