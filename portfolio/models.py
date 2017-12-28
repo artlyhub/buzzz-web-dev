@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 from accounts.models import Profile
@@ -44,6 +45,14 @@ class PortfolioHistory(models.Model):
     status = models.CharField(max_length=1, choices=STATUS)
     quantity = models.IntegerField(default=1)
     price = models.IntegerField()
+
+    def __str__(self):
+        return self.portfolio.name
+
+
+class PortfolioDiagnosis(models.Model):
+    portfolio = models.ForeignKey(Portfolio, related_name='diagnosis')
+    ratio = JSONField()
 
     def __str__(self):
         return self.portfolio.name

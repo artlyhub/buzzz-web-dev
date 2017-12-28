@@ -8,12 +8,15 @@ from rest_framework.response import Response
 
 from portfolio.api.serializers import (
     PortfolioDiagnosisSerializer,
+    PortfolioOptimizationSerializer,
+    PortfolioRatioSerializer,
     PortfolioSerializer,
     PortfolioHistorySerializer,
 )
 from portfolio.models import (
     Portfolio,
     PortfolioHistory,
+    PortfolioDiagnosis,
 )
 from restapi.models import (
     Ticker,
@@ -68,6 +71,16 @@ class PortfolioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class PortfolioDiagnosisAPIView(generics.RetrieveAPIView):
     queryset = Portfolio
     serializer_class = PortfolioDiagnosisSerializer
+
+
+class PortfolioRatioAPIView(generics.ListCreateAPIView):
+    queryset = PortfolioDiagnosis.objects.all()
+    serializer_class = PortfolioRatioSerializer
+
+
+class PortfolioOptimizationAPIView(generics.RetrieveAPIView):
+    queryset = Portfolio
+    serializer_class = PortfolioOptimizationSerializer
 
 
 class PortfolioHistoryAPIView(generics.ListCreateAPIView):

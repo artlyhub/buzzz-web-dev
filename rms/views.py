@@ -41,3 +41,20 @@ class RMSDiagnosisView(View):
                     'date': datetime.now()
                 }
         return render(self.request, 'rms_opt.html', context)
+
+
+class RMSOptimizationView(View):
+    def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return redirect('/')
+        portfolio = Portfolio.objects.filter(pk=pk)
+        if portfolio.exists():
+            if portfolio.first().user == request.user:
+                context = {'status': '최적화'}
+            else:
+                context = {
+                    'status': '최적화',
+                    'portfolio': portfolio.first(),
+                    'date': datetime.now()
+                }
+        return render(self.request, 'rms_final.html', context)

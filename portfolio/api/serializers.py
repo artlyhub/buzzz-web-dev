@@ -1,11 +1,12 @@
 import time, datetime
 from decimal import Decimal
+import numpy as np
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from portfolio.algorithms import PortfolioAlgorithm
-from portfolio.models import Portfolio, PortfolioHistory
+from portfolio.algorithms import BlackLitterman, PortfolioAlgorithm
+from portfolio.models import Portfolio, PortfolioDiagnosis, PortfolioHistory
 from restapi.models import Ticker, OHLCV, Specs
 
 User = get_user_model()
@@ -34,6 +35,14 @@ class PortfolioHistorySerializer(serializers.ModelSerializer):
                   'status',
                   'quantity',
                   'price',)
+
+
+class PortfolioRatioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortfolioDiagnosis
+        fields = ('id',
+                  'portfolio',
+                  'ratio',)
 
 
 class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
@@ -123,6 +132,8 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
             if key != 'cash':
                 stock_ratio = val['invested']/capital
                 ratio_dict[key]['ratio'] = float(format(round(stock_ratio, 4), '.4f'))
+        pd_inst = PortfolioDiagnosis(portfolio=obj, ratio=ratio_dict)
+        pd_inst.save()
         # STEP 2: Calculate portfolio specs
         ### performance: 4s ###
         port_info = {'status': '동일 비중 포트폴리오', 'ratio': ratio_dict}
@@ -154,3 +165,63 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
         vol_s = vol_s//stock_counts
         tot_s = int(tot_s//stock_counts)
         return [tot_s, mom_s, volt_s, cor_s, vol_s]
+
+
+class PortfolioOptimizationSerializer(serializers.ModelSerializer):
+    result = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Portfolio
+        fields = ('id',
+                  'user',
+                  'name',
+                  'capital',
+                  'portfolio_type',
+                  'description',
+                  'result',
+                  'created',
+                  'updated',)
+
+    def get_result(self, obj):
+        ratio_dict = PortfolioDiagnosis.objects.filter(portfolio=obj).order_by('-id').first().ratio
+        old_weights = []
+        for key, val in ratio_dict.items():
+            if key != 'cash':
+                ratio_data = [key, float(val['ratio'])]
+                old_weights.append(ratio_data)
+        bl = BlackLitterman(ratio_dict)
+        weights = bl.optimize()
+        r, v, sr, yield_r, bt = bl.new_portfolio_info(weights)
+        new_bt = bl.change_bt_format(bt)
+        stock_counts = len(weights)
+        port_info = {'status': '최적화 포트폴리오'}
+        port_info['old_weights'] = old_weights
+        port_info['weights'] = [[bl.settings['ticker_list'][i], weights[i]] for i in range(stock_counts)]
+        weight_diffs = []
+        for i in range(stock_counts):
+            code = port_info['weights'][i][0]
+            ticker_inst = Ticker.objects.filter(code=code).order_by('-date').first()
+            name = ticker_inst.name
+            weight_diff = port_info['weights'][i][1] - port_info['old_weights'][i][1]
+            weight_diff = float(format(round(weight_diff, 4), '.4f'))
+            weight_diff_data = [name, code, weight_diff]
+            weight_diffs.append(weight_diff_data)
+        port_info['weight_differences'] = weight_diffs
+        port_info['return'] = float(format(round(yield_r, 3)*100, '.3f'))
+        port_info['average_return'] = float(format(round(r, 3)*100, '.3f'))
+        port_info['average_volatility'] = float(format(round(v, 3)*100, '.3f'))
+        port_info['sharpe_ratio'] = float(format(round(sr, 3), '.3f'))
+        port_info['backtest_result'] = new_bt
+        mom_s, volt_s, cor_s, vol_s, tot_s = 0, 0, 0, 0, 0
+        score_weights = list(np.array(weights)/sum(weights))
+        for i in range(stock_counts):
+            code = bl.settings['ticker_list'][i]
+            specs = Specs.objects.filter(code=code).order_by('date').first()
+            weight = score_weights[i]
+            mom_s += int(specs.momentum_score*weight)
+            volt_s += int(specs.volatility_score*weight)
+            cor_s += int(specs.correlation_score*weight)
+            vol_s += int(specs.volume_score*weight)
+            tot_s += int(((specs.momentum_score + specs.volatility_score + specs.correlation_score + specs.volume_score)/4)*weight)
+        port_info['port_specs'] = [tot_s, mom_s, volt_s, cor_s, vol_s]
+        return port_info

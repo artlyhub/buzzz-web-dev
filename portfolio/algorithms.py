@@ -1,6 +1,9 @@
 import math, datetime, time
+from datetime import datetime
 import numpy as np
+from numpy import *
 import pandas as pd
+import scipy.optimize
 
 from restapi.models import Ticker, OHLCV
 
@@ -9,8 +12,8 @@ class PortfolioAlgorithm:
     def __init__(self, ratio_dict, filter_date=False):
         self.ratio_dict = ratio_dict
         if not filter_date:
-            last_year = str(datetime.datetime.now().year - 1)
-            last_month = datetime.datetime.now().month - 1 or 12
+            last_year = str(datetime.now().year - 1)
+            last_month = datetime.now().month - 1 or 12
             last_month = str(last_month).zfill(2)
             filter_date = last_year + last_month + '00'
             self.filter_date = filter_date
@@ -25,15 +28,6 @@ class PortfolioAlgorithm:
         self._retrieve_weights()
         self._create_ohlcv_df()
         self._calc_port_returns()
-
-    # # legacy function
-    # def _start_df_setup(self):
-    #     for key, _ in self.ratio_dict.items():
-    #         if key != 'cash':
-    #             self.settings['ticker_list'].append(key)
-    #             ohlcv_qs = OHLCV.objects.filter(code=key).distinct('date')
-    #             ohlcv = list(ohlcv_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
-    #             self.settings['ohlcv_list'].append(ohlcv)
 
     def _start_df_setup(self):
         # setting ticker_list
@@ -140,6 +134,108 @@ class PortfolioAlgorithm:
         return new_data
 
 
-class BlackLitterman:
-    def __init__(self):
-        pass
+class BlackLitterman(PortfolioAlgorithm):
+    # Markowitz Mean-Variance Optimization
+    def _port_mean(self, W, R):
+        return sum(R * W)
+
+    def _port_var(self, W, C):
+        return dot(dot(W, C), W)
+
+    def _port_mean_var(self, W, R, C):
+        return self._port_mean(W, R), self._port_var(W, C)
+
+    def _risk_free_return(self):
+        _, BM_r, _, _ = self._bm_specs()
+        return BM_r
+
+    def _solve_weights(self, W, R, C, rf):
+        def fitness(W, R, C, rf):
+            mean, var = self._port_mean_var(W, R, C)
+            util = (mean - rf)/sqrt(var) # Sharpe ratio
+            return 1/util
+        n = len(W)
+        b_ = [(0.,1.) for i in range(n)]
+        c_ = ({'type':'eq', 'fun': lambda W: sum(W)-1. })
+        optimized = scipy.optimize.minimize(fitness, W, (R, C, rf),
+                    method='SLSQP', constraints=c_, bounds=b_)
+        if not optimized.success:
+            raise BaseException(optimized.message)
+        return optimized.x
+
+    # Black Litterman Model
+    def _implied_return(self, W, R, C, rf):
+        mean, var = self._port_mean_var(W, R, C)
+        risk_aversion = (mean - rf)/var
+        return dot(dot(risk_aversion, C), W)
+
+    def _dual_momentum(self):
+        return_data = self.R
+        for i in range(1, 13):
+            momentum = return_data - return_data.shift(i)
+            if i == 1:
+                temp = momentum
+            else:
+                temp += momentum
+        mom = temp/12
+        return mom.ix[-1]
+
+    def _set_views(self):
+        mom_s = self._dual_momentum()
+        ticker_num = len(mom_s.index)
+        views = []
+        for i in range(ticker_num):
+            ticker_i = mom_s.index[i]
+            for j in range(i+1, ticker_num):
+                ticker_j = mom_s.index[j]
+                diff = mom_s[ticker_i] - mom_s[ticker_j]
+                if diff > 0:
+                    sign = '>'
+                else:
+                    sign = '<'
+                view = (ticker_i, sign, ticker_j, abs(diff))
+                views.append(view)
+        return views
+
+    def _create_views_and_link_matrix(self, names, views):
+        r, c = len(views), len(names)
+        Q = [views[i][3] for i in range(r)]  # view matrix
+        P = zeros([r, c])
+        nameToIndex = dict()
+        for i, n in enumerate(names):
+            nameToIndex[n] = i
+        for i, v in enumerate(views):
+            name1, name2 = views[i][0], views[i][2]
+            P[i, nameToIndex[name1]] = +1 if views[i][1] == '>' else -1
+            P[i, nameToIndex[name2]] = -1 if views[i][1] == '>' else +1
+        return array(Q), P
+
+    def optimize(self):
+        W = self.W
+        R = self.R.mean()
+        C = self.R.cov()
+        rf = self._risk_free_return()
+        Pi = self._implied_return(W, R, C, rf)
+        views = self._set_views()
+        Q, P = self._create_views_and_link_matrix(self.settings['ticker_list'], views)
+        tau = 0.025
+        inv = np.linalg.inv
+        omega = dot(dot(dot(tau, P), C), transpose(P))
+        sub_a = inv(dot(tau, C))
+        sub_b = dot(dot(transpose(P), inv(omega)), P)
+        sub_c = dot(inv(dot(tau, C)), Pi)
+        sub_d = dot(dot(transpose(P), inv(omega)), Q)
+        Pi_adj = dot(inv(sub_a + sub_b), (sub_c + sub_d))
+        weights = self._solve_weights(W, Pi + rf, C, rf)
+        weights = [float(format(round(weight, 4), '.4f')) for weight in weights]
+        return weights
+
+    def new_portfolio_info(self, W):
+        W = pd.Series(W, index=self.settings['ticker_list'])
+        BM_wr, BM_r, BM_v, BM_yc = self._bm_specs()
+        wr, r, v, yc = self._backtest_port(W, self.R)
+        sr = self._sharpe_ratio(r, BM_r, v)
+        yield_r = yc.ix[len(yc)-1] - 1
+        bt = pd.concat([yc, BM_yc], axis=1)
+        bt.columns = ['Portfolio', 'Benchmark']
+        return r, v, sr, yield_r, bt
