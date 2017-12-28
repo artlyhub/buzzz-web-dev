@@ -45,7 +45,7 @@
         // console.log(algo_1mon)
       },
       error: function(data){
-        console.log('error')
+        console.log(data)
       }
     })
   }
