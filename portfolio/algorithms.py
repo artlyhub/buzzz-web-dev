@@ -211,7 +211,8 @@ class BlackLitterman(PortfolioAlgorithm):
         return array(Q), P
 
     def optimize(self):
-        W = self.W
+        n = len(self.W)
+        W = ones([n])/n
         R = self.R.mean()
         C = self.R.cov()
         rf = self._risk_free_return()
