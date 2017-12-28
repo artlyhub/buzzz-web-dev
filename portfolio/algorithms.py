@@ -226,7 +226,7 @@ class BlackLitterman(PortfolioAlgorithm):
         sub_c = dot(inv(dot(tau, C)), Pi)
         sub_d = dot(dot(transpose(P), inv(omega)), Q)
         Pi_adj = dot(inv(sub_a + sub_b), (sub_c + sub_d))
-        weights = self._solve_weights(W, Pi + rf, C, rf)
+        weights = self._solve_weights(W, Pi_adj + rf, C, rf)
         weights = [float(format(round(weight, 4), '.4f')) for weight in weights]
         return weights
 
