@@ -119,6 +119,9 @@
                 display: 'none'
             }
         },
+        tooltip: {
+            valueDecimals: 2
+        },
         chart: {
             renderTo: 'port_situation',
             type: 'pie',

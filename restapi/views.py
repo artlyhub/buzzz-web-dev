@@ -8,12 +8,14 @@ from rest_framework.views import APIView
 
 from restapi.serializers import (
     TickerSerializer,
+    SpecsSerializer,
     InfoSerializer,
     OHLCVSerializer,
     FinancialSerializer,
 )
 from restapi.models import (
     Ticker,
+    Specs,
     Info,
     OHLCV,
     Financial,
@@ -48,6 +50,34 @@ class TickerAPIView(generics.ListCreateAPIView):
 class TickerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ticker.objects.all()
     serializer_class = TickerSerializer
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class SpecsAPIView(generics.ListCreateAPIView):
+    serializer_class = SpecsSerializer
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    pagination_class = StandardResultPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = Specs.objects.all().order_by('id')
+        date_by = self.request.GET.get('date')
+        code_by = self.request.GET.get('code')
+        if date_by and code_by:
+            queryset_list = queryset.filter(date=date_by).filter(code=code_by)
+            return queryset_list
+        if date_by and not code_by:
+            queryset_list = queryset.filter(date=date_by)
+            return queryset_list
+        if code_by and not date_by:
+            queryset_list = queryset.filter(code=code_by)
+            return queryset_list
+        return queryset
+
+
+class SpecsDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Specs.objects.all()
+    serializer_class = SpecsSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 

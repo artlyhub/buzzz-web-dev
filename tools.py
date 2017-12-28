@@ -60,13 +60,25 @@ elif sys.argv[1] == 'data':
             d.send_bm()
         elif sys.argv[3] == 'ohlcv':
             d.send_ohlcv()
+    elif sys.argv[2] == 'update':
+        if sys.argv[3] == 'ohlcv':
+            d.update_ohlcv()
+    elif sys.argv[2] == 'clean':
+        if sys.argv[3] == 'ohlcv':
+            d.clean_ohlcv()
+        elif sys.argv[3] == 'bm':
+            d.clean_bm()
 
 elif sys.argv[1] == 'krx':
     KRX.main(start_path)
 
 elif sys.argv[1] == 'process':
     p = Processor()
-    p.get_data_local()
-    p.set_return_portfolio()
-    p.bm_data()
-    p.save_mom_volt_cor_vol()
+    if sys.argv[2] == 'make':
+        p.make_data()
+    elif sys.argv[2] == 'specs':
+        p.score_data()
+    # p.get_data_local()
+    # p.set_return_portfolio()
+    # p.bm_data()
+    # p.save_mom_volt_cor_vol()

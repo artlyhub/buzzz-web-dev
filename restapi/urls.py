@@ -4,6 +4,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from restapi.views import (
     TickerAPIView,
     TickerDetailAPIView,
+    SpecsAPIView,
+    SpecsDetailAPIView,
     TickerUpdatedAPIView,
     InfoAPIView,
     InfoDetailAPIView,
@@ -20,6 +22,9 @@ urlpatterns = [
     url(r'^ticker/$', TickerAPIView.as_view(), name='ticker'),
     url(r'^ticker/(?P<pk>\d+)/$', TickerDetailAPIView.as_view(), name='ticker-detail'),
     url(r'^ticker-updated/$', TickerUpdatedAPIView.as_view(), name='ticker-updated'),
+
+    url(r'^specs/$', SpecsAPIView.as_view(), name='specs'),
+    url(r'^specs/(?P<pk>\d+)/$', SpecsDetailAPIView.as_view(), name='specs-detail'),
 
     url(r'^info/$', InfoAPIView.as_view(), name='info'),
     url(r'^info/(?P<pk>\d+)/$', InfoDetailAPIView.as_view(), name='info-detail'),

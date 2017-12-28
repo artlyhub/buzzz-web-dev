@@ -1,4 +1,4 @@
-import math, datetime
+import math, datetime, time
 import numpy as np
 import pandas as pd
 
@@ -26,13 +26,28 @@ class PortfolioAlgorithm:
         self._create_ohlcv_df()
         self._calc_port_returns()
 
+    # # legacy function
+    # def _start_df_setup(self):
+    #     for key, _ in self.ratio_dict.items():
+    #         if key != 'cash':
+    #             self.settings['ticker_list'].append(key)
+    #             ohlcv_qs = OHLCV.objects.filter(code=key).distinct('date')
+    #             ohlcv = list(ohlcv_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
+    #             self.settings['ohlcv_list'].append(ohlcv)
+
     def _start_df_setup(self):
-        for key, val in self.ratio_dict.items():
-            if key != 'cash':
-                self.settings['ticker_list'].append(key)
-                ohlcv_qs = OHLCV.objects.filter(code=key).distinct('date')
-                ohlcv = list(ohlcv_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
-                self.settings['ohlcv_list'].append(ohlcv)
+        # setting ticker_list
+        self.settings['ticker_list'] = [ticker for ticker in self.ratio_dict.keys() if ticker != 'cash']
+        ticker_list = self.settings['ticker_list']
+        # setting ohlcv_list
+        init_qs = OHLCV.objects.filter(code__in=ticker_list)
+        filtered_qs = init_qs.exclude(date__lte=self.filter_date).order_by('date')
+        ohlcv_qs = filtered_qs.values_list('code', 'date', 'close_price')
+        ohlcv_list = []
+        for ticker in ticker_list:
+            ticker_ohlcv = [{'date': data[1], 'close_price': data[2]} for data in ohlcv_qs if data[0] == ticker]
+            ohlcv_list.append(ticker_ohlcv)
+        self.settings['ohlcv_list'] = ohlcv_list
 
     def _retrieve_weights(self):
         S = list()

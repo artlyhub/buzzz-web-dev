@@ -4,6 +4,7 @@ from rest_framework.serializers import ValidationError
 
 from restapi.models import (
     Ticker,
+    Specs,
     Info,
     OHLCV,
     Financial,
@@ -21,6 +22,22 @@ class TickerSerializer(serializers.ModelSerializer):
                   'date',
                   'name',
                   'market_type',)
+
+
+class SpecsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Specs
+        fields = ('code',
+                  'date',
+                  'momentum',
+                  'volatility',
+                  'correlation',
+                  'volume',
+                  'momentum_score',
+                  'volatility_score',
+                  'correlation_score',
+                  'volume_score',
+                  'total_score',)
 
 
 class InfoSerializer(serializers.ModelSerializer):

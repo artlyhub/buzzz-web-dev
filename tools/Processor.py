@@ -1,23 +1,18 @@
 import pandas as pd
 from datetime import datetime
+import time
 
 from restapi.models import Info, Ticker, OHLCV, Specs
 
 DATA_PATH = 'C:/Users/hori9/Desktop/MINED/devcode/data'
 
+
 class Processor(object):
     def __init__(self, filter_date=False):
         date = datetime.now().strftime('%Y%m%d')
         tickers = Ticker.objects.filter(date=date).values_list('code')
-        # self.ticker_list = [ticker[0] for ticker in tickers]
-        self.ticker_list = ['005930', '000660', '005380', '005490', '035420', '051910',
-                            '105560', '012330', '015760', '032830', '068270', '091990',
-                            '130960', '263750', '086900', '003670', '034230', '036490',
-                            '253450', '046890', '151910']
-        self.ind_list = ['전기전자', '전기전자', '운수장비', '철강금속', '서비스업',
-                         '화학', '기타금융업', '운수장비', '전기가스', '보험업',
-                         '제약', '도매', '방송서비스', '디지털컨텐츠', '제약',
-                         '비금속', '오락문화', '반도체', '오락문화', '반도체', 'IT부품']
+        # self.ticker_list = ['005930', '000660', '005380', '005490']
+        self.ticker_list = [ticker[0] for ticker in list(tickers)]
         if not filter_date:
             last_year = str(datetime.now().year - 1)
             last_month = datetime.now().month - 1 or 12
@@ -25,26 +20,28 @@ class Processor(object):
             filter_date = last_year + last_month + '00'
             self.filter_date = filter_date
 
-    def get_data(self):
-        self._make_data()
-        # print(self.ohlcv_df)
-        # print(self.vol_df)
-
-    def _make_data(self):
+    def make_data(self):
+        start = time.time()
         self.ohlcv_list = []
         self.volume_list = []
+        init_qs = OHLCV.objects.filter(code__in=self.ticker_list)
+        filtered_qs = init_qs.exclude(date__lte=self.filter_date).order_by('date')
+        ohlcv_qs = filtered_qs.values_list('code', 'date', 'close_price', 'volume')
+        self.price_list = []
+        self.volume_list = []
         for ticker in self.ticker_list:
-            print(ticker)
-            ohlcv_qs = OHLCV.objects.filter(code=ticker).distinct('date')
-            ohlcv = list(ohlcv_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
-            volume = list(ohlcv_qs.exclude(date__lte=self.filter_date).values_list('date', 'close_price', 'volume'))
-            volume = [{'date': data[0], 'volume': data[1]*data[2]} for data in volume]
-            self.ohlcv_list.append(ohlcv)
-            self.volume_list.append(volume)
+            ticker_price = [{'date': data[1], 'close_price': data[2]} for data in ohlcv_qs if data[0] == ticker]
+            ticker_volume = [{'date': data[1], 'volume': data[3]} for data in ohlcv_qs if data[0] == ticker]
+            self.price_list.append(ticker_price)
+            self.volume_list.append(ticker_volume)
+        end = time.time()
+        print('time took: ', str(end-start))
+
+        start = time.time()
         for i in range(len(self.ticker_list)):
             print(i)
             ticker = self.ticker_list[i]
-            ohlcv = self.ohlcv_list[i]
+            ohlcv = self.price_list[i]
             vol = self.volume_list[i]
             if i == 0:
                 ohlcv_df = self._create_df(ticker, ohlcv, 'close_price')
@@ -58,8 +55,11 @@ class Processor(object):
         vol_df.index = pd.to_datetime(vol_df.index)
         self.ohlcv_df = ohlcv_df
         self.vol_df = vol_df
-        self.ohlcv_df.to_csv('ohlcv_df.csv')
-        self.vol_df.to_csv('vol_df.csv')
+        self.ohlcv_df.to_csv(DATA_PATH + '/ohlcv_df.csv')
+        self.vol_df.to_csv(DATA_PATH + '/vol_df.csv')
+        end = time.time()
+        print('time took: ', str(end-start))
+        print('created csv files')
 
     def _create_df(self, ticker, ohlcv, col_name):
         df = pd.DataFrame(ohlcv)
@@ -70,28 +70,22 @@ class Processor(object):
             df.rename(columns={col_name: ticker}, inplace=True)
         return df
 
-    def update_info(self):
-        date = '20171219'
-        info_list = []
-        for i in range(len(self.ticker_list)):
-            info_inst = Info(code=self.ticker_list[i],
-                             date=date,
-                             size_type='L',
-                             industry=self.ind_list[i])
-            info_list.append(info_inst)
-        Info.objects.bulk_create(info_list)
+    def score_data(self):
+        self._get_data_local()
+        self.vol = (self.ohlcv_df * self.vol_df).ix[-1]
+        self._set_return_portfolio()
+        self._add_bm_data()
+        self._save_mom_volt_cor_vol()
 
-    def get_data_local(self):
-        self.ohlcv_df = pd.read_csv(DATA_PATH + '/ohlcv_df.csv', header=0)
-        self.ohlcv_df.set_index('date', inplace=True)
-        self.vol_df = pd.read_csv(DATA_PATH + '/vol_df.csv', header=0)
-        self.vol_df.set_index('date', inplace=True)
+    def _get_data_local(self):
+        self.ohlcv_df = pd.read_csv(DATA_PATH + '/ohlcv_df.csv', header=0, index_col='date', parse_dates=True)
+        self.vol_df = pd.read_csv(DATA_PATH + '/vol_df.csv', header=0, index_col='date', parse_dates=True)
 
-    def set_return_portfolio(self):
+    def _set_return_portfolio(self):
         self.portfolio_data = self.ohlcv_df.pct_change()
 
-    def bm_data(self):
-        BM_qs = OHLCV.objects.filter(code='BM').distinct('date')
+    def _add_bm_data(self):
+        BM_qs = OHLCV.objects.filter(code='BM')
         BM_data = list(BM_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
         BM = pd.DataFrame(BM_data)
         BM.set_index('date', inplace=True)
@@ -100,8 +94,9 @@ class Processor(object):
         BM = BM.pct_change()
         self.portfolio_data.index = pd.to_datetime(self.portfolio_data.index)
         self.portfolio_data = pd.concat([self.portfolio_data, BM], axis=1)
+        self.portfolio_data.fillna(0, inplace=True)
 
-    def dual_momentum(self):
+    def _dual_momentum(self):
         # codes = list(close_data.columns)
         return_data = self.portfolio_data
         for i in range(1, 13):
@@ -113,23 +108,27 @@ class Processor(object):
         mom = temp/12
         self.mom = mom.ix[-1]
 
-    def calc_volatility(self):
-        """ calculates volatility with rolling yearly standard deviation and returns the volatility array """
+    def _calc_volatility(self):
         self.volt = pd.DataFrame(self.portfolio_data).rolling(window=12).std().ix[-1]
 
-    def calc_correlation(self):
+    def _calc_correlation(self):
         self.cor = self.portfolio_data.corr()['Benchmark']
 
-    def save_mom_volt_cor_vol(self):
-        self.dual_momentum()
-        self.calc_volatility()
-        self.calc_correlation()
+    def _save_mom_volt_cor_vol(self):
+        self._dual_momentum()
+        self._calc_volatility()
+        self._calc_correlation()
 
-        mom_s = 100 - self.mom.rank(ascending=False)
-        volt_s = 100 - self.volt.rank(ascending=True)
-        cor_s = 100 - self.cor.rank(ascending=True)
-        vol_s = 100 - self.vol_df.ix[len(self.vol_df)-1].rank(ascending=False)
-        date = '20171219'
+        mom_s = self.mom.rank(ascending=True)
+        mom_s = (mom_s/mom_s.max())*100
+        volt_s = self.volt.rank(ascending=False)
+        volt_s = (volt_s/volt_s.max())*100
+        cor_s = self.cor.rank(ascending=False)
+        cor_s = (cor_s/cor_s.max())*100
+        vol_s = self.vol.rank(ascending=True)
+        vol_s = (vol_s/vol_s.max())*100
+
+        date = datetime.now().strftime('%Y%m%d')
         specs_list = []
         for ticker in self.ticker_list:
             momentum_score = mom_s[ticker]
@@ -142,11 +141,12 @@ class Processor(object):
                                momentum=self.mom[ticker],
                                volatility=self.volt[ticker],
                                correlation=self.cor[ticker],
-                               volume=self.vol_df.ix[len(self.vol_df)-1][ticker],
+                               volume=self.vol[ticker],
                                momentum_score=momentum_score,
                                volatility_score=volatility_score,
                                correlation_score=correlation_score,
                                volume_score=volume_score,
                                total_score=total_score)
             specs_list.append(specs_inst)
+            print('Added {} specs'.format(ticker))
         Specs.objects.bulk_create(specs_list)
