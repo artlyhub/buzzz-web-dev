@@ -14,49 +14,39 @@
 
     $.ajax({
       method: "GET",
-      url: '/api/portfolio/' + port_id + '/diagnosis/',
+      url: '/api/portfolio/' + port_id + '/optimization/',
       success: function(data){
         $('#loader-wrapper').fadeOut(1000)
         $('#rms_portfolio_section').fadeIn(1000)
         $('#sub_footer').fadeIn(1000)
         $('.bee_icon').fadeIn(1000)
 
-        var ratio = data.port_info.ratio
-        var left_ratio = 1
-        var ratio_array = []
-        for (var key in ratio) {
-          if (key != 'cash') {
-            var ratio_point = parseFloat(ratio[key]['ratio'])
-            var ratio_data = [key, ratio_point*100]
-            ratio_array.push(ratio_data)
-            left_ratio -= ratio_point
-          } else {
-            // pass
-          }
-        var ratio_data = ['현금', left_ratio*100]
-        ratio_array.push(ratio_data)
-        draw_port_situation(ratio_array)
+        var old_ratio_array = data.result.old_weights
+        var ratio_array = data.result.weights
+        draw_port_situation('port_situation', ratio_array)
 
-        var port_spec = data.port_specs
+        var port_spec = data.result.port_specs
         draw_port_spec(port_spec)
 
-        var ret = data.port_info.return
-        var avg_ret = data.port_info.average_return
-        var avg_vol = data.port_info.average_volatility
-        var sharpe = data.port_info.sharpe_ratio
+        var ret = data.result.return
+        var avg_ret = data.result.average_return
+        var avg_vol = data.result.average_volatility
+        var sharpe = data.result.sharpe_ratio
         parse_port_info(ret, avg_ret, avg_vol, sharpe)
 
-        console.log(data.port_info.backtest_result)
-        var result = data.port_info.backtest_result
+        var result = data.result.backtest_result
         var algo = result['Portfolio']
         var bm = result['Benchmark']
         draw_result_graph(algo, bm)
 
-        var algo_1mon = algo.slice(-1)[1] - algo.slice(-2)[1]
-        console.log(algo_1mon)
+        var variance_list = data.result.weight_differences
+        parse_variance_table(old_ratio_array, ratio_array, variance_list)
+        // var algo_1mon = algo.slice(-1)[1] - algo.slice(-2)[1]
+        // console.log(algo_1mon)
+        draw_port_situation('market_donut')
       },
       error: function(data){
-        console.log('error')
+        console.log(data)
       }
     })
   }
@@ -65,6 +55,37 @@
   $('#sub_footer').hide()
   $('.bee_icon').hide()
   draw_charts()
+
+  function parse_variance_table(old_ratio_array, ratio_array, variance_list) {
+    var item_html = ''
+    for (var i = 0; i < variance_list.length; i++) {
+      var var_data = variance_list[i]
+      var old_weight = old_ratio_array[i][1]*100
+      var weight = ratio_array[i][1]*100
+      var name = var_data[0]
+      var code = var_data[1]
+      var diff = var_data[2]*100
+      if (diff >= 0) {
+        var td_color = 'plus_td'
+        var sign = '+'
+      } else {
+        var td_color = 'minus_td'
+        var sign = ''
+      }
+      var variance_item = `
+      <div class="variance_tr clear_col {0}">
+          <div class="variance_td col">{1}({2})</div>
+          <div class="variance_td val_td col">
+              <span>{3}%</span>
+              <span class="variance_icon"></span>
+              <span>{4}% ({5}{6}%)</span>
+          </div>
+      </div>
+      `.format(td_color, name, code, old_weight.toFixed(2), weight.toFixed(2), sign, diff.toFixed(2))
+      item_html = item_html.concat(variance_item)
+    }
+    $('#variance_table_list').html(item_html)
+  }
 
   function parse_port_info(ret, avg_ret, avg_vol, sharpe) {
     if (ret >= 0) {
@@ -104,7 +125,7 @@
     $('#port_info_area').html(port_html)
   }
 
-  function draw_port_situation(data) {
+  function draw_port_situation(place_id, data) {
     // 포트폴리오 현황
     var port_situation_chart = new Highcharts.Chart({
         title: {
@@ -123,7 +144,7 @@
             valueDecimals: 2
         },
         chart: {
-            renderTo: 'port_situation',
+            renderTo: place_id,
             type: 'pie',
             backgroundColor: '#27314f',
         },

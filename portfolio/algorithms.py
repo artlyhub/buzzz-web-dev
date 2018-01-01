@@ -1,4 +1,4 @@
-import math, datetime, time
+import math, time
 from datetime import datetime
 import numpy as np
 from numpy import *
@@ -11,9 +11,12 @@ from restapi.models import Ticker, OHLCV
 class PortfolioAlgorithm:
     def __init__(self, ratio_dict, filter_date=False):
         self.ratio_dict = ratio_dict
+        recent_update_date = OHLCV.objects.filter(code='BM').order_by('-date').first().date
+        year = recent_update_date[:4]
+        month = recent_update_date[4:6]
         if not filter_date:
-            last_year = str(datetime.now().year - 1)
-            last_month = datetime.now().month - 1 or 12
+            last_year = str(int(year) - 5)
+            last_month = int(month) - 1 or 12
             last_month = str(last_month).zfill(2)
             filter_date = last_year + last_month + '00'
             self.filter_date = filter_date
@@ -124,14 +127,84 @@ class PortfolioAlgorithm:
         new_data = dict()
         for column in bt.columns:
             ret_data = list()
-            # dates = bt.index.astype(np.int64)
-            dates = bt.index
+            dates = bt.index.astype(np.int64)//1000000 # pandas timestamp returns in microseconds, divide by million
             for i in range(len(bt)):
                 data = bt.ix[i]
                 date = dates[i]
                 ret_data.append([date, float(format(round(data[column], 4), '.4f'))])
             new_data[column] = ret_data
         return new_data
+
+
+class EAA(PortfolioAlgorithm):
+    # def add_bm_data(self):
+    #     BM_qs = OHLCV.objects.filter(code='BM')
+    #     BM_data = list(BM_qs.exclude(date__lte=self.filter_date).values('date', 'close_price'))
+    #     BM = pd.DataFrame(BM_data)
+    #     BM.set_index('date', inplace=True)
+    #     BM.index = pd.to_datetime(BM.index)
+    #     BM.rename(columns={'close_price': 'Benchmark'}, inplace=True)
+    #     BM = BM.resample('M').last().pct_change()
+    #     self.R.index = pd.to_datetime(self.R.index)
+    #     self.R = pd.concat([self.R, BM], axis=1)
+    #     self.R.fillna(0, inplace=True)
+
+    def _set_monthly_close(self, period='M'):
+        self.ohlcv_df.index = pd.to_datetime(self.ohlcv_df.index)
+        monthly_close = self.ohlcv_df.resample(period).last()
+        monthly_close.dropna(how='all', inplace=True)
+        self.monthly_close = monthly_close
+
+    def _dual_momentum(self):
+        monthly_close = self.monthly_close
+        for i in range(1, 13):
+            momentum = (monthly_close - monthly_close.shift(i))/monthly_close.shift(i)
+            if i == 1:
+                temp = momentum
+            else:
+                temp += momentum
+        mom = temp/12
+        # return mom.ix[-1]
+        return mom.fillna(0)
+
+    def _volatility(self):
+        # return self.R.rolling(window=12).std().ix[-1]
+        return self.R.rolling(window=12).std().fillna(0)
+
+    def _correlation(self):
+        corr = self.R.copy()
+        corr['Eq_weight'] = list(pd.DataFrame(corr.values.T*(1.0/len(corr.columns))).sum())
+        return corr.corr().ix[-1][:-1]
+
+    def EAA(self, mom, vol, corr):
+        cash_amount = (len(mom) - len(mom[mom > 0]))/len(mom)
+        stock_amount = 1 - cash_amount
+        eaa_amount = (1 - corr[mom > 0])/vol[mom > 0]
+        stock_amount = stock_amount*eaa_amount/eaa_amount.sum()
+        return cash_amount, stock_amount
+
+    def backtest_EAA(self):
+        self._set_monthly_close()
+        mom = self._dual_momentum()
+        vol = self._volatility()
+        corr = self._correlation()
+        returns_list = []
+        for date in range(len(self.R)):
+            cash_amt, stock_amt = self.EAA(mom.ix[date], vol.ix[date], corr)
+            returns = ( self.R.ix[date] * (stock_amt * (1 - cash_amt)) ).fillna(0)
+            returns_list.append(returns.sum())
+        weights = [float(format(round(weight, 4), '.4f')) for weight in stock_amt * (1 - cash_amt)]
+        wr = pd.DataFrame(returns_list)
+        r = wr.mean()[0]
+        v = wr.std()[0]
+        yc = (wr + 1).cumprod()
+        BM_wr, BM_r, BM_v, BM_yc = self._bm_specs()
+        sr = self._sharpe_ratio(r, BM_r, v)
+        yield_r = (yc.ix[len(yc) - 1] - 1)[0]
+        yc.index = BM_yc.index
+        bt = pd.concat([yc, BM_yc], axis=1)
+        bt.columns = ['Portfolio', 'Benchmark']
+        return r, v, sr, yield_r, bt, weights
 
 
 class BlackLitterman(PortfolioAlgorithm):
@@ -227,7 +300,8 @@ class BlackLitterman(PortfolioAlgorithm):
         sub_c = dot(inv(dot(tau, C)), Pi)
         sub_d = dot(dot(transpose(P), inv(omega)), Q)
         Pi_adj = dot(inv(sub_a + sub_b), (sub_c + sub_d))
-        weights = self._solve_weights(W, Pi_adj + rf, C, rf)
+        # weights = self._solve_weights(W, Pi_adj + rf, C, rf)
+        weights = self._solve_weights(W, Pi + rf, C, rf)
         weights = [float(format(round(weight, 4), '.4f')) for weight in weights]
         return weights
 

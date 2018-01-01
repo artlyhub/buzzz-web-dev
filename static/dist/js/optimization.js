@@ -23,7 +23,7 @@
 
         var old_ratio_array = data.result.old_weights
         var ratio_array = data.result.weights
-        draw_port_situation(ratio_array)
+        draw_port_situation('port_situation', ratio_array)
 
         var port_spec = data.result.port_specs
         draw_port_spec(port_spec)
@@ -43,6 +43,12 @@
         parse_variance_table(old_ratio_array, ratio_array, variance_list)
         // var algo_1mon = algo.slice(-1)[1] - algo.slice(-2)[1]
         // console.log(algo_1mon)
+        var market_array = data.result.market
+        draw_port_situation('market_donut', market_array)
+        var size_array = data.result.size
+        draw_port_situation('size_donut', size_array)
+        var industry_array = data.result.industry
+        draw_port_situation('sector_donut', industry_array)
       },
       error: function(data){
         console.log(data)
@@ -124,7 +130,7 @@
     $('#port_info_area').html(port_html)
   }
 
-  function draw_port_situation(data) {
+  function draw_port_situation(place_id, data) {
     // 포트폴리오 현황
     var port_situation_chart = new Highcharts.Chart({
         title: {
@@ -143,7 +149,7 @@
             valueDecimals: 2
         },
         chart: {
-            renderTo: 'port_situation',
+            renderTo: place_id,
             type: 'pie',
             backgroundColor: '#27314f',
         },
@@ -358,233 +364,5 @@
       }]
     })
   }
-
-  // // 시장
-  // var port_situation_chart = new Highcharts.Chart({
-  //     title: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     subtitle: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     chart: {
-  //         renderTo: 'market_chart',
-  //         type: 'pie',
-  //         backgroundColor: '#27314f',
-  //     },
-  //     credits: {
-  //         enabled: false
-  //     },
-  //     plotOptions: {
-  //         pie: {
-  //             allowPointSelect: true,
-  //             cursor: 'pointer',
-  //             borderColor: '#27314f',
-  //             innerSize: '60%',
-  //             dataLabels: {
-  //                 enabled: true,
-  //                 style: {
-  //                     color: 'white'
-  //                 }
-  //             }
-  //         }
-  //     },
-  //     series: [{
-  //         name: '비중',
-  //         data: [
-  //             ['Firefox', 44.2],
-  //             ['IE7', 26.6],
-  //             ['IE6', 20],
-  //             ['Chrome', 3.1],
-  //             ['Other', 5.4]
-  //             ]}]
-  //   },
-  //   // using
-  //   function(port_situation_chart) { // on complete
-  //       var xpos = '50%'
-  //       var ypos = '53%'
-  //       var circleradius = 102
-  //   // Render the circle
-  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-  //       fill: '#27314f',
-  //   }).add()
-  // })
-  //
-  // // 사이즈
-  // var port_situation_chart = new Highcharts.Chart({
-  //     title: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     subtitle: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     chart: {
-  //         renderTo: 'size_chart',
-  //         type: 'pie',
-  //         backgroundColor: '#27314f',
-  //     },
-  //     credits: {
-  //         enabled: false
-  //     },
-  //     plotOptions: {
-  //         pie: {
-  //             allowPointSelect: true,
-  //             cursor: 'pointer',
-  //             borderColor: '#27314f',
-  //             innerSize: '60%',
-  //             dataLabels: {
-  //                 enabled: true,
-  //                 style: {
-  //                     color: 'white'
-  //                 }
-  //             }
-  //         }
-  //     },
-  //     series: [{
-  //         name: '비중',
-  //         data: [
-  //             ['Firefox', 44.2],
-  //             ['IE7', 26.6],
-  //             ['IE6', 20],
-  //             ['Chrome', 3.1],
-  //             ['Other', 5.4]
-  //             ]}]
-  //   },
-  //   // using
-  //   function(port_situation_chart) { // on complete
-  //       var xpos = '50%'
-  //       var ypos = '53%'
-  //       var circleradius = 102
-  //   // Render the circle
-  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-  //       fill: '#27314f',
-  //   }).add()
-  // })
-  //
-  // // 스타일
-  // var port_situation_chart = new Highcharts.Chart({
-  //     title: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     subtitle: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     chart: {
-  //         renderTo: 'style_chart',
-  //         type: 'pie',
-  //         backgroundColor: '#27314f',
-  //     },
-  //     credits: {
-  //         enabled: false
-  //     },
-  //     plotOptions: {
-  //         pie: {
-  //             allowPointSelect: true,
-  //             cursor: 'pointer',
-  //             borderColor: '#27314f',
-  //             innerSize: '60%',
-  //             dataLabels: {
-  //                 enabled: true,
-  //                 style: {
-  //                     color: 'white'
-  //                 }
-  //             }
-  //         }
-  //     },
-  //     series: [{
-  //         name: '비중',
-  //         data: [
-  //             ['Firefox', 44.2],
-  //             ['IE7', 26.6],
-  //             ['IE6', 20],
-  //             ['Chrome', 3.1],
-  //             ['Other', 5.4]
-  //             ]}]
-  //   },
-  //   // using
-  //   function(port_situation_chart) { // on complete
-  //       var xpos = '50%'
-  //       var ypos = '53%'
-  //       var circleradius = 102
-  //   // Render the circle
-  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-  //       fill: '#27314f',
-  //   }).add()
-  // })
-  //
-  // // 섹터
-  // var port_situation_chart = new Highcharts.Chart({
-  //     title: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     subtitle: {
-  //         text: '',
-  //         style: {
-  //             display: 'none'
-  //         }
-  //     },
-  //     chart: {
-  //         renderTo: 'sector_chart',
-  //         type: 'pie',
-  //         backgroundColor: '#27314f',
-  //     },
-  //     credits: {
-  //         enabled: false
-  //     },
-  //     plotOptions: {
-  //         pie: {
-  //             allowPointSelect: true,
-  //             cursor: 'pointer',
-  //             borderColor: '#27314f',
-  //             innerSize: '60%',
-  //             dataLabels: {
-  //                 enabled: true,
-  //                 style: {
-  //                     color: 'white'
-  //                 }
-  //             }
-  //         }
-  //     },
-  //     series: [{
-  //         name: '비중',
-  //         data: [
-  //             ['Firefox', 44.2],
-  //             ['IE7', 26.6],
-  //             ['IE6', 20],
-  //             ['Chrome', 3.1],
-  //             ['Other', 5.4]
-  //             ]}]
-  //   },
-  //   // using
-  //   function(port_situation_chart) { // on complete
-  //       var xpos = '50%'
-  //       var ypos = '53%'
-  //       var circleradius = 102
-  //   // Render the circle
-  //   port_situation_chart.renderer.circle(xpos, ypos, circleradius).attr({
-  //       fill: '#27314f',
-  //   }).add()
-  // })
 
 })(jQuery)

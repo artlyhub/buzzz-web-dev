@@ -5,9 +5,10 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from portfolio.algorithms import BlackLitterman, PortfolioAlgorithm
+from portfolio.algorithms import BlackLitterman, EAA, PortfolioAlgorithm
+from portfolio.analysis import InitialPortfolio
 from portfolio.models import Portfolio, PortfolioDiagnosis, PortfolioHistory
-from restapi.models import Ticker, OHLCV, Specs
+from restapi.models import Info, Ticker, OHLCV, Specs
 
 User = get_user_model()
 
@@ -71,71 +72,10 @@ class PortfolioDiagnosisSerializer(serializers.ModelSerializer):
         # STEP 1: Calculate portfolio ratio
         ### performance: 2s ###
         stocks = obj.history.all()
-        stock_counts = stocks.count()
         capital = obj.capital
-        capital_per_stock = capital//stock_counts
-        left_over_capital = 0
-        ratio_dict = dict()
-        ohlcv_inst_list = list()
-        for stock in stocks:
-            code = stock.code.code
-            ohlcv = OHLCV.objects.filter(code=stock.code.code)
-            # exception handling for when our database isn't fully functional yet
-            if ohlcv.exists():
-                ohlcv_inst = ohlcv.order_by('-date').first()
-                ohlcv_inst_list.append(ohlcv_inst)
-                ticker_inst = Ticker.objects.filter(code=ohlcv_inst.code).order_by('-date').first()
-                name = ticker_inst.name
-                date = ohlcv_inst.date
-                close_price = ohlcv_inst.close_price
-                stock_data = {
-                    'name': name,
-                    'date': date,
-                    'price': int(close_price)
-                }
-                ratio_dict[code] = stock_data
-                if close_price < capital_per_stock:
-                    stock_num = capital_per_stock//close_price
-                    invested = stock_num*close_price
-                    ratio_dict[code]['invested'] = int(invested)
-                    left_over_capital += capital_per_stock - invested
-                    ratio_dict[code]['buy_num'] = int(stock_num)
-                else:
-                    ratio_dict[code]['invested'] = 0
-                    ratio_dict[code]['buy_num'] = 0
-            else:
-                continue
-        ### performance: 1s ###
-        ratio_dict['cash'] = left_over_capital
-        redistribute = left_over_capital > 0
-        while redistribute:
-            extra_buy = list(filter(lambda x: x.close_price < left_over_capital, ohlcv_inst_list))
-            if len(extra_buy) == 0:
-                redistribute = False
-                continue
-            extra_capital_per_stock = left_over_capital//len(extra_buy)
-            extra_buy_num = list(map(lambda x: extra_capital_per_stock//x.close_price, extra_buy))
-            if sum(extra_buy_num) == 0:
-                redistribute = False
-                continue
-            close_price_list = [ohlcv.close_price for ohlcv in extra_buy]
-            reset_left_over = int(left_over_capital - sum(map(lambda x, y: x*y, extra_buy_num, close_price_list)))
-            extra_stocks = [ohlcv.code for ohlcv in extra_buy]
-            for i in range(len(extra_stocks)):
-                extra_invested = extra_buy_num[i]*close_price_list[i]
-                ratio_dict[extra_stocks[i]]['invested'] += int(extra_invested)
-                ratio_dict[extra_stocks[i]]['buy_num'] += int(extra_buy_num[i])
-            ratio_dict['cash'] = reset_left_over
-            ohlcv_inst_list = extra_buy
-            left_over_capital = reset_left_over
-        for key, val in ratio_dict.items():
-            if key != 'cash':
-                stock_ratio = val['invested']/capital
-                ratio_dict[key]['ratio'] = float(format(round(stock_ratio, 4), '.4f'))
-        pd_inst = PortfolioDiagnosis(portfolio=obj, ratio=ratio_dict)
-        pd_inst.save()
-        # STEP 2: Calculate portfolio specs
-        ### performance: 4s ###
+        ip = InitialPortfolio(obj, stocks, capital)
+        ratio_dict = ip.ratio_dict
+
         port_info = {'status': '동일 비중 포트폴리오', 'ratio': ratio_dict}
         pa = PortfolioAlgorithm(ratio_dict)
         r, v, sr, yield_r, bt = pa.portfolio_info()
@@ -187,21 +127,23 @@ class PortfolioOptimizationSerializer(serializers.ModelSerializer):
         old_weights = []
         for key, val in ratio_dict.items():
             if key != 'cash':
-                ratio_data = [key, float(val['ratio'])]
+                ratio_data = [val['name'], float(val['ratio'])]
                 old_weights.append(ratio_data)
-        bl = BlackLitterman(ratio_dict)
-        weights = bl.optimize()
-        r, v, sr, yield_r, bt = bl.new_portfolio_info(weights)
-        new_bt = bl.change_bt_format(bt)
+        eaa = EAA(ratio_dict)
+        r, v, sr, yield_r, bt, weights = eaa.backtest_EAA()
+        new_bt = eaa.change_bt_format(bt)
+        # bl = BlackLitterman(ratio_dict)
+        # weights = bl.optimize()
+        # r, v, sr, yield_r, bt = bl.new_portfolio_info(weights)
+        # new_bt = bl.change_bt_format(bt)
         stock_counts = len(weights)
         port_info = {'status': '최적화 포트폴리오'}
         port_info['old_weights'] = old_weights
-        port_info['weights'] = [[bl.settings['ticker_list'][i], weights[i]] for i in range(stock_counts)]
+        port_info['weights'] = [[old_weights[i][0], weights[i]] for i in range(stock_counts)]
         weight_diffs = []
         for i in range(stock_counts):
-            code = port_info['weights'][i][0]
-            ticker_inst = Ticker.objects.filter(code=code).order_by('-date').first()
-            name = ticker_inst.name
+            code = eaa.settings['ticker_list'][i]
+            name = port_info['weights'][i][0]
             weight_diff = port_info['weights'][i][1] - port_info['old_weights'][i][1]
             weight_diff = float(format(round(weight_diff, 4), '.4f'))
             weight_diff_data = [name, code, weight_diff]
@@ -214,8 +156,9 @@ class PortfolioOptimizationSerializer(serializers.ModelSerializer):
         port_info['backtest_result'] = new_bt
         mom_s, volt_s, cor_s, vol_s, tot_s = 0, 0, 0, 0, 0
         score_weights = list(np.array(weights)/sum(weights))
+
         for i in range(stock_counts):
-            code = bl.settings['ticker_list'][i]
+            code = eaa.settings['ticker_list'][i]
             specs = Specs.objects.filter(code=code).order_by('date').first()
             weight = score_weights[i]
             mom_s += int(specs.momentum_score*weight)
@@ -224,4 +167,39 @@ class PortfolioOptimizationSerializer(serializers.ModelSerializer):
             vol_s += int(specs.volume_score*weight)
             tot_s += int(((specs.momentum_score + specs.volatility_score + specs.correlation_score + specs.volume_score)/4)*weight)
         port_info['port_specs'] = [tot_s, mom_s, volt_s, cor_s, vol_s]
+
+        market_dict = {}
+        size_dict = {}
+        ind_dict = {}
+        for i in range(stock_counts):
+            code = eaa.settings['ticker_list'][i]
+            weight = port_info['weights'][i][1]
+            # market types
+            market_type = Ticker.objects.filter(code=code).first().market_type
+            market_name = '코스피' if market_type == 'KP' else '코스닥'
+            if not market_name in market_dict.keys():
+                market_dict[market_name] = weight
+            else:
+                market_dict[market_name] += weight
+            # size types, industry types
+            info = Info.objects.filter(code=code).order_by('-date').first()
+            size_type = info.size_type
+            industry = info.industry
+            if size_type == 'L':
+                size_type = '대형주'
+            elif size_type == 'M':
+                size_type = '중형주'
+            else:
+                size_type = '소형주'
+            if not size_type in size_dict.keys():
+                size_dict[size_type] = weight
+            else:
+                size_dict[size_type] += weight
+            if not industry in ind_dict.keys():
+                ind_dict[industry] = weight
+            else:
+                ind_dict[industry] += weight
+        port_info['market'] = market_dict.items()
+        port_info['size'] = size_dict.items()
+        port_info['industry'] = ind_dict.items()
         return port_info

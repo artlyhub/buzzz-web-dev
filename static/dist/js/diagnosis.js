@@ -27,14 +27,15 @@
         for (var key in ratio) {
           if (key != 'cash') {
             var ratio_point = parseFloat(ratio[key]['ratio'])
-            var ratio_data = [key, ratio_point*100]
+            var ratio_data = [ratio[key]['name'], ratio_point*100]
             ratio_array.push(ratio_data)
             left_ratio -= ratio_point
           } else {
-            var ratio_data = ['현금', left_ratio*100]
-            ratio_array.push(ratio_data)
+            // pass
           }
         }
+        var ratio_data = ['현금', left_ratio*100]
+        ratio_array.push(ratio_data)
         draw_port_situation(ratio_array)
 
         var port_spec = data.port_specs
