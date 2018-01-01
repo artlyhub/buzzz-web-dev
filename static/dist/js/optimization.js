@@ -23,6 +23,12 @@
 
         var old_ratio_array = data.result.old_weights
         var ratio_array = data.result.weights
+        var left_ratio = 1
+        for (var i = 0; i < ratio_array.length; i++) {
+          left_ratio -= ratio_array[i][1]
+        }
+        ratio_array.push(['현금', left_ratio])
+        console.log(ratio_array)
         draw_port_situation('port_situation', ratio_array)
 
         var port_spec = data.result.port_specs
