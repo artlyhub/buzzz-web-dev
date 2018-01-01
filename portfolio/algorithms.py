@@ -193,7 +193,14 @@ class EAA(PortfolioAlgorithm):
             cash_amt, stock_amt = self.EAA(mom.ix[date], vol.ix[date], corr)
             returns = ( self.R.ix[date] * (stock_amt * (1 - cash_amt)) ).fillna(0)
             returns_list.append(returns.sum())
-        weights = [float(format(round(weight, 4), '.4f')) for weight in stock_amt * (1 - cash_amt)]
+        weights = []
+        for ticker in self.settings['ticker_list']:
+            wt_df = stock_amt * (1 - cash_amt)
+            try:
+                weight = wt_df[ticker]
+            except KeyError:
+                weight = 0
+            weights.append(float(format(round(weight, 4), '.4f')))
         wr = pd.DataFrame(returns_list)
         r = wr.mean()[0]
         v = wr.std()[0]
