@@ -7,7 +7,7 @@ from rest_framework.serializers import ValidationError
 
 from portfolio.algorithms import BlackLitterman, EAA, PortfolioAlgorithm
 from portfolio.analysis import InitialPortfolio
-from portfolio.models import Portfolio, PortfolioDiagnosis, PortfolioHistory
+from portfolio.models import Portfolio, PortfolioDiagnosis, PortfolioHistory, TodayPortfolio
 from restapi.models import Info, Ticker, OHLCV, Specs
 
 User = get_user_model()
@@ -44,6 +44,12 @@ class PortfolioRatioSerializer(serializers.ModelSerializer):
         fields = ('id',
                   'portfolio',
                   'ratio',)
+
+
+class TodayPortfolioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TodayPortfolio
+        fields = ('date', 'portfolio')
 
 
 class PortfolioDiagnosisSerializer(serializers.ModelSerializer):

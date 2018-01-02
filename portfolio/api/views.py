@@ -12,11 +12,13 @@ from portfolio.api.serializers import (
     PortfolioRatioSerializer,
     PortfolioSerializer,
     PortfolioHistorySerializer,
+    TodayPortfolioSerializer,
 )
 from portfolio.models import (
     Portfolio,
     PortfolioHistory,
     PortfolioDiagnosis,
+    TodayPortfolio,
 )
 from restapi.models import (
     Ticker,
@@ -66,6 +68,16 @@ class PortfolioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+
+
+class TodayPortfolioAPIView(generics.ListCreateAPIView):
+    queryset = TodayPortfolio.objects.all()
+    serializer_class = TodayPortfolioSerializer
+
+
+class TodayPortfolioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TodayPortfolio.objects.all()
+    serializer_class = TodayPortfolioSerializer
 
 
 class PortfolioDiagnosisAPIView(generics.RetrieveAPIView):

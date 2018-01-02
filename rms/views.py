@@ -58,3 +58,11 @@ class RMSOptimizationView(View):
                     'date': datetime.now()
                 }
         return render(self.request, 'rms_final.html', context)
+
+
+class RMSTodayPortfolioView(View):
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('/')
+        context = {'status': '오늘의 포트폴리오'}
+        return render(self.request, 'rms_today.html', context)

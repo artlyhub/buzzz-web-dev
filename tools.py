@@ -78,6 +78,8 @@ elif sys.argv[1] == 'process':
         p.make_data()
     elif sys.argv[2] == 'specs':
         p.score_data()
+    elif sys.argv[2] == 'today_port':
+        p.make_todays_portfolio()
     # p.get_data_local()
     # p.set_return_portfolio()
     # p.bm_data()

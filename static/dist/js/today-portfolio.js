@@ -14,50 +14,35 @@
 
     $.ajax({
       method: "GET",
-      url: '/api/portfolio/' + port_id + '/optimization/',
+      url: '/api/today-portfolio/4',
       success: function(data){
-        $('#loader-wrapper').fadeOut(1000)
-        $('#rms_portfolio_section').fadeIn(1000)
-        $('#sub_footer').fadeIn(1000)
-        $('.bee_icon').fadeIn(1000)
+        // $('#loader-wrapper').fadeOut(1000)
+        // $('#rms_portfolio_section').fadeIn(1000)
+        // $('#sub_footer').fadeIn(1000)
+        // $('.bee_icon').fadeIn(1000)
 
-        var old_ratio_array = data.result.old_weights
-        var ratio_array = data.result.weights
-        var left_ratio = 1
-        for (var i = 0; i < ratio_array.length; i++) {
-          left_ratio -= ratio_array[i][1]
-        }
-        ratio_array.push(['현금', left_ratio])
-        console.log(ratio_array)
-        draw_port_situation('port_situation', ratio_array)
+        var ratio_array = data.portfolio.port_situation
+        draw_port_situation(ratio_array)
 
-        var port_spec = data.result.port_specs
+        var port_spec = data.portfolio.port_specs
         draw_port_spec(port_spec)
 
-        var ret = data.result.return
-        var avg_ret = data.result.average_return
-        var avg_vol = data.result.average_volatility
-        var sharpe = data.result.sharpe_ratio
+        var ret = data.portfolio.port_info.port_return
+        var avg_ret = data.portfolio.port_info.port_mean_return
+        var avg_vol = data.portfolio.port_info.port_mean_var
+        var sharpe = data.portfolio.port_info.sharpe_ratio
         parse_port_info(ret, avg_ret, avg_vol, sharpe)
 
-        var result = data.result.backtest_result
+        var result = data.portfolio.backtest_results
         var algo = result['Portfolio']
         var bm = result['Benchmark']
         draw_result_graph(algo, bm)
 
-        var variance_list = data.result.weight_differences
-        parse_variance_table(old_ratio_array, ratio_array, variance_list)
-        // var algo_1mon = algo.slice(-1)[1] - algo.slice(-2)[1]
-        // console.log(algo_1mon)
-        var market_array = data.result.market
-        draw_port_situation('market_donut', market_array)
-        var size_array = data.result.size
-        draw_port_situation('size_donut', size_array)
-        var industry_array = data.result.industry
-        draw_port_situation('sector_donut', industry_array)
+        var algo_1mon = algo.slice(-1)[1] - algo.slice(-2)[1]
+        console.log(algo_1mon)
       },
       error: function(data){
-        console.log(data)
+        console.log('error')
       }
     })
   }
@@ -66,37 +51,6 @@
   $('#sub_footer').hide()
   $('.bee_icon').hide()
   draw_charts()
-
-  function parse_variance_table(old_ratio_array, ratio_array, variance_list) {
-    var item_html = ''
-    for (var i = 0; i < variance_list.length; i++) {
-      var var_data = variance_list[i]
-      var old_weight = old_ratio_array[i][1]*100
-      var weight = ratio_array[i][1]*100
-      var name = var_data[0]
-      var code = var_data[1]
-      var diff = var_data[2]*100
-      if (diff >= 0) {
-        var td_color = 'plus_td'
-        var sign = '+'
-      } else {
-        var td_color = 'minus_td'
-        var sign = ''
-      }
-      var variance_item = `
-      <div class="variance_tr clear_col {0}">
-          <div class="variance_td col">{1}({2})</div>
-          <div class="variance_td val_td col">
-              <span>{3}%</span>
-              <span class="variance_icon"></span>
-              <span>{4}% ({5}{6}%)</span>
-          </div>
-      </div>
-      `.format(td_color, name, code, old_weight.toFixed(2), weight.toFixed(2), sign, diff.toFixed(2))
-      item_html = item_html.concat(variance_item)
-    }
-    $('#variance_table_list').html(item_html)
-  }
 
   function parse_port_info(ret, avg_ret, avg_vol, sharpe) {
     if (ret >= 0) {
@@ -136,7 +90,7 @@
     $('#port_info_area').html(port_html)
   }
 
-  function draw_port_situation(place_id, data) {
+  function draw_port_situation(data) {
     // 포트폴리오 현황
     var port_situation_chart = new Highcharts.Chart({
         title: {
@@ -155,7 +109,7 @@
             valueDecimals: 2
         },
         chart: {
-            renderTo: place_id,
+            renderTo: 'port_situation',
             type: 'pie',
             backgroundColor: '#27314f',
         },
