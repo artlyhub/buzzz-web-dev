@@ -16,10 +16,12 @@
       method: "GET",
       url: '/api/today-portfolio/4',
       success: function(data){
-        // $('#loader-wrapper').fadeOut(1000)
-        // $('#rms_portfolio_section').fadeIn(1000)
-        // $('#sub_footer').fadeIn(1000)
-        // $('.bee_icon').fadeIn(1000)
+        $('#loader-wrapper').fadeOut(1000)
+        $('#rms_portfolio_section').fadeIn(1000)
+        $('#sub_footer').fadeIn(1000)
+        $('.bee_icon').fadeIn(1000)
+
+        console.log(data)
 
         var ratio_array = data.portfolio.port_situation
         draw_port_situation(ratio_array)
